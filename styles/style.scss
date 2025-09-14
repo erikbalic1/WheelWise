@@ -48,7 +48,7 @@ nav {
         color: white;
         text-decoration: none;
         font-size: 1.5rem;
-        margin: 0 0.625rem;
+        margin: 0 0.5rem;
         position: relative;
         background-image: linear-gradient(white, white);
         background-size: 0% 0.125rem;
@@ -60,8 +60,7 @@ nav {
             text-decoration: none;
             background-size: 100% 0.125rem;
         }
-        a.active {
-            text-decoration: underline;
+        &.active {
             color: #FE7743;
         }
     }
@@ -131,14 +130,6 @@ nav {
         font-family: "Inter", sans-serif;
     }
 
-    span.title2 {
-        color: #FE7743;
-    }
-
-    span.title {
-        color: white;
-    }
-
     p {
         font-size: 1.5rem;
         margin-bottom: 2rem;
@@ -180,4 +171,12 @@ footer {
         margin: 0;
         font-size: 1.5rem;
     }
+}
+
+span.title2 {
+    color: #FE7743;
+}
+
+span.title {
+    color: white;
 }
