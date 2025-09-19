@@ -19,23 +19,35 @@
             <div class="auth">
                 <a href="login.html" class="login-btn">Login/Sign Up</a>
             </div>
-            <div class="lang-selector">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-globe"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+            <div class="settings-selector">
                 <select name="language" id="language-select">
                     <option value="en">EN</option>
                     <option value="hu">HU</option>
                     <option value="ro">RO</option>
                 </select>
+                <select name="currency" id="currency-select" style="margin-left:0.5rem;">
+                    <option value="USD">USD</option>
+                    <option value="EUR">EUR</option>
+                    <option value="HUF">HUF</option>
+                    <option value="RON">RON</option>
+                </select>
             </div>
+            <button id="theme-toggle" aria-label="Toggle theme" style="margin-left:auto; background:none; border:none; cursor:pointer;">
+                <svg id="theme-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <!-- Moon icon -->
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"/>
+                </svg>
+            </button>
         </nav>
     </header>
     <div class="main">
-        <h2>Welcome to <span class="title">Wheel</span><span class="title2">Wise.</span></h2>
-        <p>Your trusted partner in finding the perfect car.</p>
-        <a href="cars.html" class="explore-btn">Explore Cars</a>
+        
     </div>
     <footer>
         <p>&copy; 2025 <span class="title">Wheel</span><span class="title2">Wise.</span> All rights reserved.</p>
+        <p>Developed and designed by <a href="https://erikbalic.hu" target="_blank">Balic Erik</a></p>
+        <p>Source code of this webpage: <a href="https://github.com/erikbalic1/WheelWise" target="_blank">GitHub</a></p>
     </footer>
     <script src="../js/script.js"></script>
 </body>

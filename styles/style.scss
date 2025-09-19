@@ -10,6 +10,11 @@ body {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+
+    &.dark-theme {
+        background-color: #181A1B;
+        color: #F2F2F2;
+    }
 }
 
 nav {
@@ -65,7 +70,7 @@ nav {
         }
     }
 
-    a.login-btn, a.signup-btn {
+    a.login-btn{
         margin: 0.1rem;
         padding: 0.5rem 1rem;
         border-radius: 0.5rem;
@@ -79,9 +84,32 @@ nav {
         }
         
     }
+
+    &.dark-theme {
+        background-color: #11181F;
+        color: #F2F2F2;
+
+        .nav-links a {
+            color: #F2F2F2;
+            &:hover {
+                background-image: linear-gradient(#FE7743, #FE7743);
+            }
+            &.active {
+                color: #FE7743;
+            }
+        }
+        a.login-btn {
+            background-color: #222;
+            color: #F2F2F2;
+            &:hover {
+                background-color: #FE7743;
+                color: #fff;
+            }
+        }
+    }
 }
 
-.lang-selector {
+.settings-selector {
     display: flex;
     align-items: center;
     margin-left: 1rem;
@@ -122,13 +150,24 @@ nav {
     align-items: center;
     text-align: center;
     flex: 1 0 auto;
-    animation: main-fade-in 1.2s ease;
+    
+
+    div {
+        padding: 3rem;
+        animation: main-fade-in 1.5s ease;
+    }
 
     h2 {
         font-size: 3rem;
         margin-bottom: 1rem;
         font-family: "Inter", sans-serif;
     }
+
+    h3 {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+        font-family: "Inter", sans-serif;
+    }    
 
     p {
         font-size: 1.5rem;
@@ -155,6 +194,19 @@ nav {
             transition: font-size 0.5s ease-in-out, background-color 0.3s ease, transform 0.5s ease;
         }
     }
+
+    &.dark-theme {
+        background: none;
+        color: #F2F2F2;
+        a {
+            background-color: #FE7743;
+            color: #fff;
+            &:hover {
+                background-color: #E66E3C;
+                color: #fff;
+            }
+        }
+    }
 }
 
 footer {
@@ -171,6 +223,16 @@ footer {
         margin: 0;
         font-size: 1.5rem;
     }
+
+    a {
+        text-decoration: none;
+        color: #FE7743;
+    }
+
+    &.dark-theme {
+        background-color: #11181F;
+        color: #F2F2F2;
+    }
 }
 
 span.title2 {
@@ -180,3 +242,98 @@ span.title2 {
 span.title {
     color: white;
 }
+
+#theme-icon {
+    color: white !important;
+}
+
+.top-boxes {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    gap: 2rem;
+    margin: 2rem 0 1.5rem 0;
+}
+
+.top-boxes .box {
+    background-color: #273F4F;
+    color: white;
+    border-radius: 1rem;
+    flex: 1 1 0;
+    min-width: 180px;
+    max-width: 400px;
+    padding: 2rem 1.5rem;
+    font-family: "Rubik", sans-serif;
+    font-size: 1.3rem;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+}
+
+
+.card-list {
+    display: flex;
+    gap: 2rem;
+    justify-content: center;
+    margin-top: 2rem;
+    flex-wrap: wrap;
+}
+
+.card {
+    background-color: #273F4F;
+    color: white;
+    border-radius: 1rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    max-width: 350px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    overflow: hidden;
+}
+
+.card-img {
+    width: auto;
+    height: auto;
+    object-fit: fill;
+    border-top-left-radius: 1rem;
+    border-top-right-radius: 1rem;
+}
+
+.card-content {
+    padding: 1.2rem 1rem 0.5rem 1rem;
+    flex: 1 1 auto;
+}
+
+.card-title {
+    font-size: 2rem;
+    margin: 0 0 0.5rem 0;
+    font-family: "Inter", sans-serif;
+    font-weight: 700;
+}
+
+.card-desc {
+    font-size: 1rem;
+    margin: 0 0 1rem 0;
+    font-family: "Rubik", sans-serif;
+}
+
+.card-btn {
+    display: block;
+    margin: 1rem;
+    margin-top: auto;
+    padding: 0.7rem 1.2rem;
+    background-color: #FE7743;
+    color: white;
+    text-align: center;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    font-family: "Rubik", sans-serif;
+    text-decoration: none;
+    transition: background-color 0.3s;
+    &:hover {
+        background-color: #E66E3C;
+        color: white;
+        text-decoration: none;
+    }
+}
+
