@@ -1,11 +1,12 @@
 import { Link, useLocation } from 'react-router-dom'
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import './App.scss'
 import { translations } from './utils/constants.js'
 
 
 function Navbar({ lang, onLangChange }) {
   const location = useLocation()
+  const [username, setUsername] = useState(localStorage.getItem('wheelwise-username') || '')
   const [theme, setTheme] = useState(localStorage.getItem('wheelwise-theme') || 'light')
   const currentCurrency = localStorage.getItem('wheelwise-currency') || 'USD'
 
@@ -13,6 +14,13 @@ function Navbar({ lang, onLangChange }) {
     document.body.classList.toggle('dark-theme', theme === 'dark')
     localStorage.setItem('wheelwise-theme', theme)
   }, [theme])
+
+  useEffect(() => {
+    // Listen for login changes (e.g., after login, username is stored in localStorage)
+    const handleStorage = () => setUsername(localStorage.getItem('wheelwise-username') || '')
+    window.addEventListener('storage', handleStorage)
+    return () => window.removeEventListener('storage', handleStorage)
+  }, [])
 
   const handleThemeToggle = () => {
     setTheme(theme === 'dark' ? 'light' : 'dark')
@@ -31,9 +39,12 @@ function Navbar({ lang, onLangChange }) {
         <Link to="/contact" className={location.pathname === '/contact' ? 'active' : ''}>{translations[lang].contactUs}</Link>
       </div>
       <div className="auth">
-        <Link to="/register" className={location.pathname === '/register' ? 'active login-btn' : 'login-btn'}>
-          {translations[lang].login}
-        </Link>
+        {username
+          ? <span className="navbar-username">{username}</span>
+          : <Link to="/register" className={location.pathname === '/register' ? 'active login-btn' : 'login-btn'}>
+              {translations[lang].auth || "Login/Register"}
+            </Link>
+        }
       </div>
       <div className="settings-selector">
         <select name="language" id="language-select" value={lang} onChange={e => onLangChange(e.target.value)}>

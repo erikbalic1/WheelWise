@@ -5,7 +5,9 @@ export const translations = {
         advice: "Car Advice",
         sellCars: "Sell Cars",
         contactUs: "Contact Us",
-        login: "Login/Sign Up",
+        login: "Sign In",
+        register: "Sign Up",
+        auth: "Login/Register",
         welcome: "Welcome to ",
         trusted: "Your trusted partner in finding the perfect car.",
         explore: "Explore Cars",
@@ -20,7 +22,10 @@ export const translations = {
         card2Title: "Let AI choose your car",
         card2Desc: "Get personalized AI advice to help you choose the best car for your needs.",
         card2Btn: "Go to Car Advice",
-        servicesTitle: "WE give you the chance to choose between our services."
+        servicesTitle: "WE give you the chance to choose between our services.",
+        username: "Username",
+        email: "Email",
+        password: "Password"
     },
     hu: {
         home: "Kezdőlap",
@@ -28,7 +33,9 @@ export const translations = {
         advice: "AI tanács",
         sellCars: "Autó eladása",
         contactUs: "Kapcsolat",
-        login: "Bejelentkezés/Regisztráció",
+        login: "Bejelentkezés",
+        register: "Regisztráció",
+        auth: "Bejelentkezés/Regisztráció",
         welcome: "Üdvözöljük a ", 
         trusted: "Megbízható partnere a tökéletes autó megtalálásában.",
         explore: "Autók böngészése",
@@ -43,7 +50,10 @@ export const translations = {
         card2Title: "Hagyd, hogy az AI válasszon autót",
         card2Desc: "Kapj személyre szabott AI tanácsokat, hogy megtaláld a legjobb autót az igényeidhez.",
         card2Btn: "Ugrás az AI tanácshoz",
-        servicesTitle: "Mi lehetőséget adunk, hogy szolgáltatásaink közül válassz."
+        servicesTitle: "Mi lehetőséget adunk, hogy szolgáltatásaink közül válassz.",
+        username: "Felhasználónév",
+        email: "Email",
+        password: "Jelszó"
     },
     ro: {
         home: "Acasă",
@@ -51,7 +61,9 @@ export const translations = {
         advice: "Sfaturi AI",
         sellCars: "Vinde Mașini",
         contactUs: "Contact",
-        login: "Autentificare/Înregistrare",
+        login: "Autentificare",
+        register: "Înregistrare",
+        auth: "Autentificare/Înregistrare",
         welcome: "Bine ați venit la ",
         trusted: "Partenerul dvs. de încredere pentru a găsi mașina perfectă.",
         explore: "Caută Mașini",
@@ -66,7 +78,10 @@ export const translations = {
         card2Title: "Lasă AI să aleagă mașina",
         card2Desc: "Primește sfaturi personalizate de la AI pentru a alege cea mai bună mașină pentru tine.",
         card2Btn: "Mergi la sfatul AI",
-        servicesTitle: "Vă oferim șansa de a alege între serviciile noastre."
+        servicesTitle: "Vă oferim șansa de a alege între serviciile noastre.",
+        username: "Utilizator",
+        email: "Email",
+        password: "Parolă"
     }
 };
 
