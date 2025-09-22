@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const UserModel = require('./models/user');
 const bcrypt = require('bcrypt');
+require('dotenv').config();
 
 
 const app = express();
@@ -11,7 +12,7 @@ app.use(cors());
 
 // Connect to MongoDB   
 
-mongoose.connect("mongodb+srv://root:root@cluster0.nzpzb35.mongodb.net/users");
+mongoose.connect(process.env.MONGO_URI);
 
 app.post('/login', async (req, res) => {
     const { username, password } = req.body;

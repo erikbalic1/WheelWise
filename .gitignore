@@ -1,0 +1,5 @@
+# Add this to your .gitignore file to prevent sensitive server files from being uploaded
+
+/server/index.js
+/server/models/user.js
+server/.env
