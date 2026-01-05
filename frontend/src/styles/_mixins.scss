@@ -1,0 +1,54 @@
+// Mixins for responsive design
+@mixin respond-to($breakpoint) {
+  @if $breakpoint == mobile {
+    @media (max-width: $mobile) {
+      @content;
+    }
+  } @else if $breakpoint == tablet {
+    @media (max-width: $tablet) {
+      @content;
+    }
+  } @else if $breakpoint == desktop {
+    @media (max-width: $desktop) {
+      @content;
+    }
+  } @else if $breakpoint == large-desktop {
+    @media (min-width: $large-desktop) {
+      @content;
+    }
+  }
+}
+
+// Flexbox centering
+@mixin flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+// Card style
+@mixin card {
+  background: $background-white;
+  border-radius: $border-radius-md;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: $spacing-md;
+}
+
+// Button base
+@mixin button-base {
+  padding: $spacing-sm $spacing-md;
+  border: none;
+  border-radius: $border-radius-sm;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all $transition-speed ease;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+}
