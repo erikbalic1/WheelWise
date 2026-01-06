@@ -1,0 +1,33 @@
+@import '../../styles/variables';
+
+.home-page {
+  .hero-section {
+    padding: $spacing-xl 0;
+    text-align: center;
+    background: linear-gradient(135deg, var(--hero-gradient-start), var(--hero-gradient-end));
+    min-height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .hero-title {
+      font-size: 3rem;
+      font-weight: bold;
+      color: var(--text-primary);
+      margin-bottom: $spacing-md;
+    }
+
+    .hero-subtitle {
+      font-size: 1.5rem;
+      color: var(--text-secondary);
+      margin-bottom: $spacing-sm;
+    }
+
+    .hero-description {
+      font-size: 1.1rem;
+      color: var(--text-secondary);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+  }
+}

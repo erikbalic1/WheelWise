@@ -1,0 +1,27 @@
+@import '../../styles/variables';
+
+.auth-page {
+  padding: $spacing-xl 0;
+  min-height: 500px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .auth-container {
+    text-align: center;
+    padding: $spacing-xl;
+    background: var(--card-bg);
+    border-radius: $border-radius-lg;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+    h1 {
+      color: var(--text-primary);
+      margin-bottom: $spacing-md;
+    }
+
+    p {
+      color: var(--text-secondary);
+      font-size: 1.1rem;
+    }
+  }
+}
