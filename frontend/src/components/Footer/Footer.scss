@@ -127,19 +127,72 @@
 
   // Mobile
   @media (max-width: $mobile-max) {
-    padding: 1.5rem 0 1rem;
+    padding: 1rem 0 0.75rem;
 
     .footer-container {
       grid-template-columns: 1fr;
       padding: 0 1rem;
-      gap: 1.5rem;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .footer-section {
+      h3, h4 {
+        font-size: 1rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .footer-brand {
+        font-size: 1.25rem;
+      }
+
+      .footer-description {
+        font-size: 0.85rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .footer-social {
+        span {
+          font-size: 0.85rem;
+          margin-bottom: 0.4rem;
+        }
+
+        .social-links {
+          gap: 0.5rem;
+
+          a {
+            padding: 0.4rem 0.6rem;
+            font-size: 0.85rem;
+          }
+        }
+      }
+
+      ul {
+        li {
+          margin-bottom: 0.4rem;
+
+          a {
+            font-size: 0.85rem;
+          }
+        }
+      }
+
+      p {
+        font-size: 0.85rem;
+        margin-bottom: 0.4rem;
+        line-height: 1.5;
+      }
     }
 
     .footer-bottom {
       flex-direction: column;
-      gap: 0.75rem;
-      padding: 1.5rem 1rem 0;
+      gap: 0.5rem;
+      padding: 1rem 1rem 0;
       text-align: center;
+
+      p, a {
+        font-size: 0.8rem;
+      }
     }
   }
 }
