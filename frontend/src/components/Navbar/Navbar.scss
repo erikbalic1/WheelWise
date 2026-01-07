@@ -26,6 +26,10 @@
     text-decoration: none;
     transition: transform $transition-speed ease;
 
+    .brand-wise {
+      color: var(--accent-color);
+    }
+
     &:hover {
       transform: scale(1.05);
     }
@@ -100,16 +104,21 @@
         transform: translateX(-50%) scaleX(0);
         width: 80%;
         height: 2px;
-        background-color: var(--primary-color);
+        background-color: var(--accent-color);
         transition: transform $transition-speed ease;
       }
 
       &:hover {
-        color: var(--primary-color);
+        color: var(--accent-color);
 
         &::after {
           transform: translateX(-50%) scaleX(1);
         }
+      }
+
+      &.active {
+        color: var(--accent-color);
+        font-weight: 600;
       }
     }
   }
@@ -270,12 +279,13 @@
     font-size: 1.15rem;
     font-weight: 600;
     cursor: pointer;
-    transition: all $transition-speed ease;
+    transition: all 0.4s ease;
 
     &:hover {
-      background-color: #2980b9;
+      background-color: var(--accent-color);
+      color: #2c3e50;
       transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+      box-shadow: 0 4px 12px rgba(255, 226, 175, 0.4);
     }
 
     &:active {

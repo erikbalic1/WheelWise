@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useTheme } from '../../context/ThemeContext';
 import { useLanguage } from '../../context/LanguageContext';
 import './Navbar.scss';
@@ -46,25 +46,25 @@ const Navbar = () => {
       <div className="navbar-container">
         {/* Left: Brand Logo */}
         <Link to="/" className="navbar-brand">
-          WheelWise
+          <span className="brand-wheel">Wheel</span><span className="brand-wise">Wise</span>
         </Link>
 
         {/* Center: Navigation Links - Desktop Only */}
         <ul className="navbar-links">
           <li>
-            <Link to="/">{translations.nav.home}</Link>
+            <NavLink to="/" end>{translations.nav.home}</NavLink>
           </li>
           <li>
-            <Link to="/buy-cars">{translations.nav.buyCars}</Link>
+            <NavLink to="/buy-cars">{translations.nav.buyCars}</NavLink>
           </li>
           <li>
-            <Link to="/sell-cars">{translations.nav.sellCars}</Link>
+            <NavLink to="/sell-cars">{translations.nav.sellCars}</NavLink>
           </li>
           <li>
-            <Link to="/about">{translations.nav.about}</Link>
+            <NavLink to="/about">{translations.nav.about}</NavLink>
           </li>
           <li>
-            <Link to="/contact">{translations.nav.contact}</Link>
+            <NavLink to="/contact">{translations.nav.contact}</NavLink>
           </li>
         </ul>
 
@@ -146,19 +146,19 @@ const Navbar = () => {
         {/* Navigation Links */}
         <ul className="mobile-nav-links">
           <li>
-            <Link to="/" onClick={closeMobileMenu}>{translations.nav.home}</Link>
+            <NavLink to="/" onClick={closeMobileMenu} end>{translations.nav.home}</NavLink>
           </li>
           <li>
-            <Link to="/buy-cars" onClick={closeMobileMenu}>{translations.nav.buyCars}</Link>
+            <NavLink to="/buy-cars" onClick={closeMobileMenu}>{translations.nav.buyCars}</NavLink>
           </li>
           <li>
-            <Link to="/sell-cars" onClick={closeMobileMenu}>{translations.nav.sellCars}</Link>
+            <NavLink to="/sell-cars" onClick={closeMobileMenu}>{translations.nav.sellCars}</NavLink>
           </li>
           <li>
-            <Link to="/about" onClick={closeMobileMenu}>{translations.nav.about}</Link>
+            <NavLink to="/about" onClick={closeMobileMenu}>{translations.nav.about}</NavLink>
           </li>
           <li>
-            <Link to="/contact" onClick={closeMobileMenu}>{translations.nav.contact}</Link>
+            <NavLink to="/contact" onClick={closeMobileMenu}>{translations.nav.contact}</NavLink>
           </li>
         </ul>
 

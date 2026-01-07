@@ -75,7 +75,9 @@ const Footer = () => {
     <footer className="footer">
       <div className="footer-container">
         <div className="footer-section">
-          <h3 className="footer-brand">WheelWise</h3>
+          <h3 className="footer-brand">
+            <span className="brand-wheel">Wheel</span><span className="brand-wise">Wise</span>
+          </h3>
           <p className="footer-description">Your trusted car marketplace</p>
           <div className="footer-social">
             <span>{t.followUs}</span>

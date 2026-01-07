@@ -26,6 +26,10 @@
     .footer-brand {
       font-size: 1.5rem;
       color: var(--primary-color);
+
+      .brand-wise {
+        color: var(--accent-color);
+      }
     }
 
     .footer-description {
@@ -46,14 +50,14 @@
 
         a {
           padding: 0.5rem 0.75rem;
-          background-color: var(--primary-color);
-          color: white;
+          background-color: var(--accent-color);
+          color: #2c3e50;
           border-radius: 4px;
           text-decoration: none;
           transition: background-color 0.3s ease;
 
           &:hover {
-            background-color: darken(#3498db, 10%);
+            background-color: #f5d89e;
           }
         }
       }
@@ -72,7 +76,7 @@
           transition: color 0.3s ease;
 
           &:hover {
-            color: var(--primary-color);
+            color: var(--accent-color);
           }
         }
       }
@@ -105,7 +109,7 @@
       transition: color 0.3s ease;
 
       &:hover {
-        color: var(--primary-color);
+        color: var(--accent-color);
       }
     }
   }
