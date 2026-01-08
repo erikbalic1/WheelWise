@@ -37,16 +37,18 @@ const BuyCars = () => {
       }
     );
 
+    const sections = sectionsRef.current;
+    
     // Small delay to ensure DOM is ready
     const timer = setTimeout(() => {
-      sectionsRef.current.forEach((section) => {
+      sections.forEach((section) => {
         if (section) observer.observe(section);
       });
     }, 100);
 
     return () => {
       clearTimeout(timer);
-      sectionsRef.current.forEach((section) => {
+      sections.forEach((section) => {
         if (section) observer.unobserve(section);
       });
     };

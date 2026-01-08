@@ -39,12 +39,13 @@ const AskAI = () => {
       }
     );
 
-    sectionsRef.current.forEach((section) => {
+    const sections = sectionsRef.current;
+    sections.forEach((section) => {
       if (section) observer.observe(section);
     });
 
     return () => {
-      sectionsRef.current.forEach((section) => {
+      sections.forEach((section) => {
         if (section) observer.unobserve(section);
       });
     };

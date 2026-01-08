@@ -157,9 +157,9 @@ const Auth = () => {
                 <input type="checkbox" />
                 <span>{translations.auth?.rememberMe || 'Remember me'}</span>
               </label>
-              <a href="#" className="forgot-password">
+              <button type="button" className="forgot-password" onClick={() => {}}>
                 {translations.auth?.forgotPassword || 'Forgot password?'}
-              </a>
+              </button>
             </div>
           )}
 

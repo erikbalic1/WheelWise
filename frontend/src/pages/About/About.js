@@ -16,7 +16,6 @@ const About = () => {
 
   const animateValue = (key, start, end, duration) => {
     const startTime = performance.now();
-    const isPercentage = key === 'satisfaction';
     
     const animate = (currentTime) => {
       const elapsed = currentTime - startTime;
@@ -51,12 +50,13 @@ const About = () => {
       }
     );
 
-    sectionsRef.current.forEach((section) => {
+    const sections = sectionsRef.current;
+    sections.forEach((section) => {
       if (section) observer.observe(section);
     });
 
     return () => {
-      sectionsRef.current.forEach((section) => {
+      sections.forEach((section) => {
         if (section) observer.unobserve(section);
       });
     };
@@ -81,13 +81,14 @@ const About = () => {
       }
     );
 
-    if (statsRef.current) {
-      statsObserver.observe(statsRef.current);
+    const statsElement = statsRef.current;
+    if (statsElement) {
+      statsObserver.observe(statsElement);
     }
 
     return () => {
-      if (statsRef.current) {
-        statsObserver.unobserve(statsRef.current);
+      if (statsElement) {
+        statsObserver.unobserve(statsElement);
       }
     };
   }, []);
