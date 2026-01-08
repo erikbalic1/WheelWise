@@ -4,6 +4,7 @@ import './AskAI.scss';
 
 const AskAI = () => {
   const { translations } = useLanguage();
+  const sectionsRef = useRef([]);
   const [messages, setMessages] = useState([]);
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -22,6 +23,32 @@ const AskAI = () => {
       scrollToBottom();
     }
   }, [messages]);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('fade-in-visible');
+          }
+        });
+      },
+      {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+      }
+    );
+
+    sectionsRef.current.forEach((section) => {
+      if (section) observer.observe(section);
+    });
+
+    return () => {
+      sectionsRef.current.forEach((section) => {
+        if (section) observer.unobserve(section);
+      });
+    };
+  }, []);
 
   const suggestedQuestions = translations.askAI?.suggestedQuestions || [
     "What's the best family SUV under $30,000?",
@@ -69,13 +96,13 @@ const AskAI = () => {
   return (
     <div className="ask-ai-page">
       <div className="container">
-        <div className="ai-header">
+        <div className="ai-header fade-in-up" ref={(el) => (sectionsRef.current[0] = el)}>
           <h1>{translations.askAI?.title || 'Ask AI Assistant'}</h1>
           <p>{translations.askAI?.subtitle || 'Get instant answers to your car-related questions'}</p>
         </div>
 
         {messages.length === 0 ? (
-          <div className="welcome-section">
+          <div className="welcome-section fade-in-up" ref={(el) => (sectionsRef.current[1] = el)}>
             <div className="ai-icon">🤖</div>
             <h2>{translations.askAI?.welcomeTitle || 'How can I help you today?'}</h2>
             <p>{translations.askAI?.welcomeText || 'Ask me anything about cars, buying tips, maintenance, comparisons, and more!'}</p>

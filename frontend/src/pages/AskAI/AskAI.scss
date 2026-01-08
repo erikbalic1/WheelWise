@@ -4,6 +4,18 @@
   padding: $spacing-xl 0;
   min-height: calc(100vh - 200px);
 
+  // Fade-in-up animation
+  .fade-in-up {
+    opacity: 0;
+    transform: translateY(50px);
+    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+
+    &.fade-in-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
   .container {
     max-width: 900px;
     margin: 0 auto;
