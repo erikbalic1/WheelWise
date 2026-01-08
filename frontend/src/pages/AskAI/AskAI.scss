@@ -2,15 +2,318 @@
 
 .ask-ai-page {
   padding: $spacing-xl 0;
-  min-height: 500px;
+  min-height: calc(100vh - 200px);
 
-  h1 {
-    color: var(--text-primary);
-    margin-bottom: $spacing-md;
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
   }
 
-  p {
-    color: var(--text-secondary);
-    font-size: 1.1rem;
+  .ai-header {
+    text-align: center;
+    margin-bottom: $spacing-xl;
+
+    h1 {
+      color: var(--text-primary);
+      font-size: 2.5rem;
+      margin-bottom: $spacing-sm;
+    }
+
+    p {
+      color: var(--text-secondary);
+      font-size: 1.1rem;
+    }
+  }
+
+  .welcome-section {
+    text-align: center;
+    padding: $spacing-xl;
+
+    .ai-icon {
+      font-size: 4rem;
+      margin-bottom: $spacing-md;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    h2 {
+      color: var(--text-primary);
+      font-size: 2rem;
+      margin-bottom: $spacing-sm;
+    }
+
+    p {
+      color: var(--text-secondary);
+      font-size: 1.1rem;
+      margin-bottom: $spacing-xl;
+    }
+
+    .suggested-questions {
+      margin-top: $spacing-xl;
+
+      h3 {
+        color: var(--text-primary);
+        font-size: 1.2rem;
+        margin-bottom: $spacing-md;
+      }
+
+      .questions-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: $spacing-md;
+        margin-top: $spacing-md;
+
+        .suggested-question {
+          background: var(--card-background);
+          border: 2px solid var(--border-color);
+          border-radius: 12px;
+          padding: $spacing-md;
+          color: var(--text-primary);
+          font-size: 0.95rem;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          text-align: left;
+
+          &:hover {
+            border-color: var(--primary-color);
+            background: var(--primary-color-light);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+          }
+        }
+      }
+    }
+  }
+
+  .chat-section {
+    margin-bottom: $spacing-md;
+
+    .chat-header {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: $spacing-md;
+
+      .btn-clear {
+        background: transparent;
+        border: 1px solid var(--border-color);
+        color: var(--text-secondary);
+        padding: $spacing-xs $spacing-md;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+
+        &:hover {
+          border-color: var(--danger-color);
+          color: var(--danger-color);
+          background: rgba(220, 53, 69, 0.1);
+        }
+      }
+    }
+
+    .messages-container {
+      background: var(--card-background);
+      border: 2px solid var(--border-color);
+      border-radius: 16px;
+      padding: $spacing-lg;
+      max-height: 500px;
+      overflow-y: auto;
+      margin-bottom: $spacing-md;
+
+      .message {
+        display: flex;
+        gap: $spacing-md;
+        margin-bottom: $spacing-lg;
+        animation: slideIn 0.3s ease;
+
+        &.user {
+          flex-direction: row-reverse;
+
+          .message-content {
+            background: var(--primary-color);
+            color: white;
+            border-radius: 18px 18px 4px 18px;
+          }
+        }
+
+        &.ai {
+          .message-content {
+            background: var(--secondary-background);
+            color: var(--text-primary);
+            border-radius: 18px 18px 18px 4px;
+          }
+        }
+
+        .message-avatar {
+          font-size: 2rem;
+          flex-shrink: 0;
+        }
+
+        .message-content {
+          max-width: 70%;
+          padding: $spacing-md $spacing-lg;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+          p {
+            margin: 0;
+            line-height: 1.6;
+          }
+
+          .message-time {
+            display: block;
+            font-size: 0.75rem;
+            opacity: 0.7;
+            margin-top: $spacing-xs;
+          }
+
+          .typing-indicator {
+            display: flex;
+            gap: 4px;
+            padding: $spacing-sm 0;
+
+            span {
+              width: 8px;
+              height: 8px;
+              background: var(--text-secondary);
+              border-radius: 50%;
+              animation: typing 1.4s infinite;
+
+              &:nth-child(2) {
+                animation-delay: 0.2s;
+              }
+
+              &:nth-child(3) {
+                animation-delay: 0.4s;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .input-section {
+    .input-wrapper {
+      display: flex;
+      gap: $spacing-sm;
+      background: var(--card-background);
+      border: 2px solid var(--border-color);
+      border-radius: 50px;
+      padding: $spacing-xs;
+      transition: all 0.3s ease;
+
+      &:focus-within {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+      }
+
+      input {
+        flex: 1;
+        border: none;
+        background: transparent;
+        padding: $spacing-md $spacing-lg;
+        font-size: 1rem;
+        color: var(--text-primary);
+        outline: none;
+
+        &::placeholder {
+          color: var(--text-secondary);
+        }
+
+        &:disabled {
+          opacity: 0.5;
+        }
+      }
+
+      .btn-send {
+        background: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: 50px;
+        padding: $spacing-sm $spacing-xl;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        white-space: nowrap;
+
+        &:hover:not(:disabled) {
+          background: var(--primary-color-dark);
+          transform: translateX(2px);
+        }
+
+        &:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+      }
+    }
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes typing {
+  0%, 60%, 100% {
+    transform: translateY(0);
+  }
+  30% {
+    transform: translateY(-10px);
+  }
+}
+
+@media (max-width: 768px) {
+  .ask-ai-page {
+    .ai-header h1 {
+      font-size: 2rem;
+    }
+
+    .welcome-section {
+      padding: $spacing-md;
+
+      .suggested-questions .questions-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .chat-section .messages-container {
+      max-height: 400px;
+
+      .message .message-content {
+        max-width: 85%;
+      }
+    }
+
+    .input-section .input-wrapper {
+      padding: 4px;
+      
+      input {
+        padding: $spacing-sm $spacing-md;
+        font-size: 0.95rem;
+      }
+
+      .btn-send {
+        padding: $spacing-sm $spacing-md;
+        font-size: 0.85rem;
+        flex-shrink: 0;
+      }
+    }
   }
 }

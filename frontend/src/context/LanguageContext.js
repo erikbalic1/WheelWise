@@ -157,6 +157,23 @@ const translations = {
       statsUsers: 'Elégedett Felhasználó',
       statsDeals: 'Sikeres Üzlet',
     },
+    askAI: {
+      title: 'AI Asszisztens',
+      subtitle: 'Kapj azonnali válaszokat autókkal kapcsolatos kérdéseidre',
+      welcomeTitle: 'Hogyan segíthetek ma?',
+      welcomeText: 'Kérdezz bármit az autókról, vásárlási tippekről, karbantartásról, összehasonlításokról és még sok másról!',
+      suggestedTitle: 'Próbáld ki:',
+      suggestedQuestions: [
+        "Mi a legjobb családi SUV 10 millió forint alatt?",
+        "Hogyan ellenőrizzem, hogy egy használt autó volt-e balesetben?",
+        "Mire figyeljek használt autó vásárlásakor?",
+        "Sedan vs SUV összehasonlítás városi vezetéshez"
+      ],
+      inputPlaceholder: 'Írd be a kérdésed ide...',
+      sendButton: 'Küldés',
+      clearChat: 'Beszélgetés Törlése',
+      sampleResponse: 'Segítek az autókkal kapcsolatos kérdésekben! Ez egy helyőrző válasz. A jövőben mesterséges intelligencia fogja működtetni a rendszert, hogy részletes válaszokat adhass az autóvásárlással, karbantartással, összehasonlításokkal és még sok mással kapcsolatban.'
+    },
     auth: {
       loginTitle: 'Üdvözlünk Vissza',
       loginSubtitle: 'Jelentkezz be a WheelWise fiókodba',
@@ -273,6 +290,23 @@ const translations = {
       statsCars: 'Aktive Angebote',
       statsUsers: 'Zufriedene Benutzer',
       statsDeals: 'Erfolgreiche Geschäfte',
+    },
+    askAI: {
+      title: 'KI-Assistent',
+      subtitle: 'Erhalten Sie sofortige Antworten auf Ihre Auto-Fragen',
+      welcomeTitle: 'Wie kann ich Ihnen heute helfen?',
+      welcomeText: 'Fragen Sie mich alles über Autos, Kauftipps, Wartung, Vergleiche und mehr!',
+      suggestedTitle: 'Versuchen Sie zu fragen:',
+      suggestedQuestions: [
+        "Was ist der beste Familien-SUV unter 30.000 €?",
+        "Wie prüfe ich, ob ein Gebrauchtwagen einen Unfall hatte?",
+        "Worauf sollte ich beim Kauf eines Gebrauchtwagens achten?",
+        "Limousine vs SUV für Stadtfahrten vergleichen"
+      ],
+      inputPlaceholder: 'Geben Sie Ihre Frage hier ein...',
+      sendButton: 'Senden',
+      clearChat: 'Chat Löschen',
+      sampleResponse: 'Ich bin hier, um Ihnen bei autobezogenen Fragen zu helfen! Dies ist eine Platzhalterantwort. In Zukunft werde ich von KI angetrieben, um detaillierte Antworten zu Autokauf, Wartung, Vergleichen und mehr zu geben.'
     },
     auth: {
       loginTitle: 'Willkommen Zurück',
