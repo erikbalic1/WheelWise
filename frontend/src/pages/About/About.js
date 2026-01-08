@@ -286,8 +286,8 @@ const About = () => {
               <a href="/buy-cars" className="btn btn-primary">
                 {translations.about?.ctaBrowse || 'Browse Cars'}
               </a>
-              <a href="/sell-cars" className="btn btn-secondary">
-                {translations.about?.ctaSell || 'Sell Your Car'}
+              <a href="/ask-ai" className="btn btn-secondary">
+                {translations.about?.ctaAskAI || 'Ask AI'}
               </a>
             </div>
           </div>

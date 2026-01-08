@@ -138,7 +138,7 @@ const Home = () => {
           <p className="hero-description">{translations.home.description}</p>
           <div className="hero-cta">
             <Link to="/buy-cars" className="btn btn-primary">{translations.home.ctaBuy}</Link>
-            <Link to="/sell-cars" className="btn btn-secondary">{translations.home.ctaSell}</Link>
+            <Link to="/ask-ai" className="btn btn-secondary">{translations.home.ctaAskAI}</Link>
           </div>
         </div>
       </section>

@@ -4,9 +4,10 @@ import { ThemeProvider } from './context/ThemeContext';
 import { LanguageProvider } from './context/LanguageContext';
 import Navbar from './components/Navbar/Navbar';
 import Footer from './components/Footer/Footer';
+import ScrollToTop from './components/ScrollToTop';
 import Home from './pages/Home/Home';
 import BuyCars from './pages/BuyCars/BuyCars';
-import SellCars from './pages/SellCars/SellCars';
+import AskAI from './pages/AskAI/AskAI';
 import About from './pages/About/About';
 import Contact from './pages/Contact/Contact';
 import Auth from './pages/Auth/Auth';
@@ -17,13 +18,14 @@ function App() {
     <ThemeProvider>
       <LanguageProvider>
         <Router>
+          <ScrollToTop />
           <div className="App">
             <Navbar />
             <main>
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/buy-cars" element={<BuyCars />} />
-                <Route path="/sell-cars" element={<SellCars />} />
+                <Route path="/ask-ai" element={<AskAI />} />
                 <Route path="/about" element={<About />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/auth" element={<Auth />} />

@@ -11,7 +11,7 @@ const Footer = () => {
       quickLinks: 'Quick Links',
       home: 'Home',
       buyCars: 'Buy Cars',
-      sellCars: 'Sell Cars',
+      askAI: 'Ask AI',
       about: 'About Us',
       contact: 'Contact',
       information: 'Information',
@@ -31,7 +31,7 @@ const Footer = () => {
       quickLinks: 'Gyors Linkek',
       home: 'Főoldal',
       buyCars: 'Autók Vásárlása',
-      sellCars: 'Autó Eladása',
+      askAI: 'AI Tanács',
       about: 'Rólunk',
       contact: 'Kapcsolat',
       information: 'Információ',
@@ -51,7 +51,7 @@ const Footer = () => {
       quickLinks: 'Schnelllinks',
       home: 'Startseite',
       buyCars: 'Autos Kaufen',
-      sellCars: 'Auto Verkaufen',
+      askAI: 'AI Fragen',
       about: 'Über Uns',
       contact: 'Kontakt',
       information: 'Information',
@@ -82,9 +82,9 @@ const Footer = () => {
           <div className="footer-social">
             <span>{t.followUs}</span>
             <div className="social-links">
-              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">FB</a>
-              <a href="https://twitter.com" target="_blank" rel="noopener noreferrer">TW</a>
-              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">IG</a>
+              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">Facebook</a>
+              <a href="https://twitter.com" target="_blank" rel="noopener noreferrer">Twitter</a>
+              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">Instagram</a>
             </div>
           </div>
         </div>
@@ -94,7 +94,7 @@ const Footer = () => {
           <ul>
             <li><Link to="/">{t.home}</Link></li>
             <li><Link to="/buy-cars">{t.buyCars}</Link></li>
-            <li><Link to="/sell-cars">{t.sellCars}</Link></li>
+            <li><Link to="/ask-ai">{t.askAI}</Link></li>
             <li><Link to="/about">{t.about}</Link></li>
             <li><Link to="/contact">{t.contact}</Link></li>
           </ul>

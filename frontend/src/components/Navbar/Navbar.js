@@ -58,7 +58,7 @@ const Navbar = () => {
             <NavLink to="/buy-cars">{translations.nav.buyCars}</NavLink>
           </li>
           <li>
-            <NavLink to="/sell-cars">{translations.nav.sellCars}</NavLink>
+            <NavLink to="/ask-ai">{translations.nav.askAI}</NavLink>
           </li>
           <li>
             <NavLink to="/about">{translations.nav.about}</NavLink>
@@ -152,7 +152,7 @@ const Navbar = () => {
             <NavLink to="/buy-cars" onClick={closeMobileMenu}>{translations.nav.buyCars}</NavLink>
           </li>
           <li>
-            <NavLink to="/sell-cars" onClick={closeMobileMenu}>{translations.nav.sellCars}</NavLink>
+            <NavLink to="/ask-ai" onClick={closeMobileMenu}>{translations.nav.askAI}</NavLink>
           </li>
           <li>
             <NavLink to="/about" onClick={closeMobileMenu}>{translations.nav.about}</NavLink>
@@ -185,7 +185,7 @@ const Navbar = () => {
                 className={`lang-btn ${language === 'en' ? 'active' : ''}`}
                 onClick={() => handleLanguageChange('en')}
               >
-                🇬🇧
+                🇺🇸
               </button>
               <button
                 className={`lang-btn ${language === 'hu' ? 'active' : ''}`}
