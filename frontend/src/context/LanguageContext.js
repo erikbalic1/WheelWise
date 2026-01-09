@@ -21,6 +21,9 @@ const translations = {
       about: 'About Us',
       contact: 'Contact Us',
       signIn: 'Sign In',
+      editProfile: 'Edit Profile',
+      sellCar: 'Sell Car',
+      logOut: 'Log Out',
     },
     home: {
       title: 'Find Your Perfect Car',
@@ -189,6 +192,9 @@ const translations = {
       about: 'Rólunk',
       contact: 'Kapcsolat',
       signIn: 'Bejelentkezés',
+      editProfile: 'Profil Szerkesztése',
+      sellCar: 'Autó Eladása',
+      logOut: 'Kijelentkezés',
     },
     home: {
       title: 'Találd Meg a Tökéletes Autót',
@@ -357,6 +363,9 @@ const translations = {
       about: 'Über Uns',
       contact: 'Kontakt',
       signIn: 'Anmelden',
+      editProfile: 'Profil Bearbeiten',
+      sellCar: 'Auto Verkaufen',
+      logOut: 'Abmelden',
     },
     home: {
       title: 'Finden Sie Ihr Perfektes Auto',

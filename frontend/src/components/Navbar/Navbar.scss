@@ -269,6 +269,132 @@
     }
   }
 
+  // User Menu (when logged in)
+  .user-menu {
+    position: relative;
+
+    .user-button {
+      display: flex;
+      align-items: center;
+      gap: $spacing-xs;
+      padding: $spacing-sm $spacing-md;
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: $border-radius-sm;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+
+      .user-name {
+        max-width: 150px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+
+        @media (max-width: 768px) {
+          max-width: 100px;
+          font-size: 0.95rem;
+        }
+      }
+
+      .arrow {
+        transition: transform 0.3s ease;
+        font-size: 0.8rem;
+
+        &.open {
+          transform: rotate(180deg);
+        }
+      }
+
+      &:hover {
+        background-color: var(--accent-color);
+        color: #2c3e50;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(255, 226, 175, 0.4);
+      }
+
+      @media (max-width: 768px) {
+        padding: $spacing-xs $spacing-sm;
+        font-size: 1rem;
+      }
+    }
+
+    .user-dropdown {
+      position: absolute;
+      top: calc(100% + 10px);
+      right: 0;
+      background-color: var(--navbar-bg);
+      border: 1px solid var(--border-color);
+      border-radius: $border-radius-md;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      min-width: 200px;
+      padding: $spacing-xs 0;
+      z-index: 1000;
+      animation: slideDown 0.3s ease;
+
+      button {
+        width: 100%;
+        padding: $spacing-sm $spacing-md;
+        background: none;
+        border: none;
+        text-align: center;
+        font-size: 1rem;
+        font-weight: 500;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        letter-spacing: 0.3px;
+        color: var(--text-primary);
+        cursor: pointer;
+        transition: all 0.2s ease;
+
+        &:hover {
+          background-color: var(--hover-bg);
+        }
+
+        &.animated-btn {
+          position: relative;
+          overflow: hidden;
+
+          &::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(var(--primary-color-rgb, 52, 152, 219), 0.1);
+            transform: translate(-50%, -50%);
+            transition: width 0.4s ease, height 0.4s ease;
+          }
+
+          &:hover::before {
+            width: 300px;
+            height: 300px;
+          }
+
+          &:hover {
+            background-color: var(--hover-bg);
+            transform: scale(1.02);
+            font-weight: 600;
+          }
+        }
+
+        &.logout-btn {
+          color: #e74c3c;
+          border-top: 1px solid var(--border-color);
+          margin-top: $spacing-xs;
+          padding-top: $spacing-sm;
+
+          &:hover {
+            background-color: rgba(231, 76, 60, 0.1);
+          }
+        }
+      }
+    }
+  }
+
   // Sign In Button
   .btn-signin {
     padding: $spacing-sm $spacing-xl;
@@ -291,6 +417,17 @@
     &:active {
       transform: translateY(0);
     }
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
@@ -354,6 +491,77 @@
           transform: translateX(5px);
         }
       }
+    }
+  }
+
+  // Mobile User Menu (when logged in)
+  .mobile-user-menu {
+    border-top: 2px solid var(--border-color);
+    padding: $spacing-md;
+    background-color: var(--background-light);
+
+    .mobile-user-info {
+      text-align: center;
+      padding: $spacing-md;
+      background-color: var(--primary-color);
+      color: white;
+      border-radius: $border-radius-md;
+      margin-bottom: $spacing-md;
+
+      .mobile-user-name {
+        font-size: 1.1rem;
+        font-weight: 600;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      }
+    }
+
+    .mobile-user-actions {
+      display: flex;
+      flex-direction: column;
+      gap: $spacing-sm;
+
+      button {
+        width: 100%;
+        padding: $spacing-md;
+        background-color: var(--navbar-bg);
+        border: none;
+        border-radius: $border-radius-md;
+        font-size: 1rem;
+        font-weight: 500;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        color: var(--text-primary);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-align: center;
+
+        &:hover {
+          background-color: var(--hover-bg);
+          transform: scale(1.02);
+        }
+
+        &.logout-btn {
+          color: white;
+          background-color: #e74c3c;
+          margin-top: $spacing-sm;
+
+          &:hover {
+            background-color: #c0392b;
+          }
+        }
+      }
+    }
+  }
+
+  // Mobile Sign In Button (when not logged in)
+  .mobile-signin {
+    padding: $spacing-md;
+    border-top: 2px solid var(--border-color);
+    background-color: var(--background-light);
+
+    .btn-signin {
+      width: 100%;
+      padding: $spacing-md;
+      font-size: 1.1rem;
     }
   }
 

@@ -2,12 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useTheme } from '../../context/ThemeContext';
 import { useLanguage } from '../../context/LanguageContext';
+import { useAuth } from '../../context/AuthContext';
 import './Navbar.scss';
 
 const Navbar = () => {
   const { theme, toggleTheme } = useTheme();
   const { language, changeLanguage, translations } = useLanguage();
+  const { user, logout, isAuthenticated } = useAuth();
   const [isLanguageOpen, setIsLanguageOpen] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -39,6 +42,17 @@ const Navbar = () => {
 
   const closeMobileMenu = () => {
     setIsMobileMenuOpen(false);
+  };
+
+  const handleLogout = () => {
+    logout();
+    setIsUserMenuOpen(false);
+    navigate('/');
+  };
+
+  const handleProfileClick = (path) => {
+    setIsUserMenuOpen(false);
+    navigate(path);
   };
 
   return (
@@ -115,13 +129,38 @@ const Navbar = () => {
             )}
           </div>
 
-          {/* Sign In Button */}
-          <button
-            className="btn-signin"
-            onClick={() => navigate('/auth')}
-          >
-            {translations.nav.signIn}
-          </button>
+          {/* Sign In Button or User Menu */}
+          {isAuthenticated ? (
+            <div className="user-menu">
+              <button
+                className="user-button"
+                onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+              >
+                <span className="user-name">{user?.name}</span>
+                <span className={`arrow ${isUserMenuOpen ? 'open' : ''}`}>▼</span>
+              </button>
+              {isUserMenuOpen && (
+                <div className="user-dropdown">
+                  <button onClick={() => handleProfileClick('/profile')} className="animated-btn">
+                    {translations.nav.editProfile}
+                  </button>
+                  <button onClick={() => handleProfileClick('/sell-cars')} className="animated-btn">
+                    {translations.nav.sellCar}
+                  </button>
+                  <button onClick={handleLogout} className="logout-btn">
+                    {translations.nav.logOut}
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <button
+              className="btn-signin"
+              onClick={() => navigate('/auth')}
+            >
+              {translations.nav.signIn}
+            </button>
+          )}
 
           {/* Hamburger Menu Button - Mobile/Tablet Only */}
           <button 

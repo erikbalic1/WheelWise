@@ -1,0 +1,26 @@
+@import '../../styles/variables';
+@import '../../styles/mixins';
+
+.profile-page {
+  min-height: calc(100vh - 80px);
+  padding: 3rem 1rem;
+  background-color: var(--background-light);
+
+  .profile-container {
+    max-width: 800px;
+    margin: 0 auto;
+    background: var(--background-white);
+    border-radius: $border-radius-lg;
+    padding: 2rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+    h1 {
+      color: var(--text-primary);
+      margin-bottom: 1rem;
+    }
+
+    p {
+      color: var(--text-secondary);
+    }
+  }
+}
