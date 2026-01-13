@@ -6,7 +6,10 @@ const {
   getMe,
   oauthSuccess,
   oauthFailure,
-  logout
+  logout,
+  updateProfile,
+  updatePassword,
+  updateAvatar
 } = require('../controllers/authController');
 const { protect } = require('../middlewares/auth');
 
@@ -19,6 +22,11 @@ router.post('/logout', logout);
 
 // Get current user (protected route)
 router.get('/me', protect, getMe);
+
+// Profile update routes (protected)
+router.put('/profile', protect, updateProfile);
+router.put('/password', protect, updatePassword);
+router.put('/avatar', protect, updateAvatar);
 
 // Google OAuth routes
 router.get('/google',
