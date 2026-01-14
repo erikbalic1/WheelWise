@@ -3,6 +3,7 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
+const path = require('path');
 const connectDB = require('./config/database');
 const passport = require('./config/passport');
 
@@ -20,6 +21,9 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+
+// Serve static files (uploaded images)
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 // Session configuration (required for OAuth)
 app.use(session({
@@ -47,7 +51,7 @@ app.get('/', (req, res) => {
 
 // Routes
 app.use('/api/auth', require('./routes/authRoutes'));
-// app.use('/api/cars', require('./routes/carRoutes'));
+app.use('/api', require('./routes/carRoutes'));
 // app.use('/api/users', require('./routes/userRoutes'));
 
 // Start server

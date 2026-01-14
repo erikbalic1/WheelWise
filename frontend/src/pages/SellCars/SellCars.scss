@@ -2,15 +2,328 @@
 
 .sell-cars-page {
   padding: $spacing-xl 0;
-  min-height: 500px;
+  min-height: calc(100vh - 200px);
+  background: var(--background-secondary);
 
-  h1 {
-    color: var(--text-primary);
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 $spacing-md;
+  }
+
+  .sell-cars-header {
+    text-align: center;
+    margin-bottom: $spacing-xl;
+    padding: $spacing-xl 0;
+    background: var(--background-primary);
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+    h1 {
+      color: var(--text-primary);
+      margin-bottom: $spacing-md;
+      font-size: 2.5rem;
+    }
+
+    p {
+      color: var(--text-secondary);
+      font-size: 1.1rem;
+    }
+  }
+
+  .alert {
+    padding: $spacing-md;
+    border-radius: 8px;
+    margin-bottom: $spacing-lg;
+    font-weight: 500;
+
+    &.alert-error {
+      background: #fee;
+      color: #c00;
+      border: 1px solid #fcc;
+    }
+
+    &.alert-success {
+      background: #efe;
+      color: #060;
+      border: 1px solid #cfc;
+    }
+  }
+
+  .sell-car-form {
+    background: var(--background-primary);
+    border-radius: 12px;
+    padding: $spacing-xl;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .form-section {
+    margin-bottom: $spacing-xl;
+    padding-bottom: $spacing-xl;
+    border-bottom: 1px solid var(--border-color);
+
+    &:last-of-type {
+      border-bottom: none;
+    }
+
+    h2 {
+      color: var(--text-primary);
+      font-size: 1.5rem;
+      margin-bottom: $spacing-sm;
+    }
+
+    .section-description {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      margin-bottom: $spacing-md;
+    }
+  }
+
+  .image-upload-container {
+    .image-upload-label {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: $spacing-xl;
+      border: 2px dashed var(--border-color);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      background: var(--background-secondary);
+
+      &:hover {
+        border-color: var(--primary-color);
+        background: var(--background-primary);
+      }
+
+      .upload-icon {
+        font-size: 3rem;
+        margin-bottom: $spacing-sm;
+      }
+
+      span {
+        color: var(--text-secondary);
+        font-size: 1rem;
+      }
+
+      .image-input {
+        display: none;
+      }
+    }
+
+    .image-previews {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: $spacing-md;
+      margin-top: $spacing-md;
+
+      .image-preview {
+        position: relative;
+        aspect-ratio: 4/3;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+
+        .remove-image-btn {
+          position: absolute;
+          top: 8px;
+          right: 8px;
+          width: 32px;
+          height: 32px;
+          border-radius: 50%;
+          background: rgba(255, 0, 0, 0.8);
+          color: white;
+          border: none;
+          font-size: 1.5rem;
+          line-height: 1;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: background 0.3s ease;
+
+          &:hover {
+            background: rgba(200, 0, 0, 1);
+          }
+        }
+
+        .primary-badge {
+          position: absolute;
+          bottom: 8px;
+          left: 8px;
+          background: var(--primary-color);
+          color: white;
+          padding: 4px 8px;
+          border-radius: 4px;
+          font-size: 0.75rem;
+          font-weight: 600;
+        }
+      }
+    }
+  }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: $spacing-md;
     margin-bottom: $spacing-md;
   }
 
-  p {
-    color: var(--text-secondary);
-    font-size: 1.1rem;
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+
+    &.full-width {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      color: var(--text-primary);
+      font-weight: 500;
+      margin-bottom: $spacing-xs;
+      font-size: 0.95rem;
+    }
+
+    input,
+    select,
+    textarea {
+      padding: $spacing-sm $spacing-md;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      font-size: 1rem;
+      color: var(--text-primary);
+      background: var(--card-bg);
+      transition: border-color 0.3s ease;
+      position: relative;
+      z-index: 1;
+
+      &:focus {
+        outline: none;
+        border-color: var(--primary-color);
+      }
+
+      option {
+        background: var(--card-bg);
+        color: var(--text-primary);
+      }
+
+      &::placeholder {
+        color: var(--text-tertiary);
+      }
+
+      &.disabled-input {
+        background: var(--background-secondary);
+        cursor: not-allowed;
+      }
+    }
+
+    textarea {
+      resize: vertical;
+      font-family: inherit;
+    }
+
+    small {
+      color: var(--text-tertiary);
+      font-size: 0.85rem;
+      margin-top: 4px;
+    }
+
+    .char-count {
+      align-self: flex-end;
+      color: var(--text-tertiary);
+      font-size: 0.85rem;
+      margin-top: 4px;
+    }
+  }
+
+  .form-actions {
+    display: flex;
+    gap: $spacing-md;
+    justify-content: flex-end;
+    margin-top: $spacing-xl;
+    padding-top: $spacing-lg;
+    border-top: 1px solid var(--border-color);
+
+    .btn {
+      padding: $spacing-sm $spacing-xl;
+      border-radius: 6px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: none;
+
+      &.btn-primary {
+        background: var(--primary-color);
+        color: white;
+
+        &:hover:not(:disabled) {
+          background: var(--primary-hover);
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        &:disabled {
+          background: var(--border-color);
+          cursor: not-allowed;
+          opacity: 0.6;
+        }
+      }
+
+      &.btn-secondary {
+        background: var(--background-secondary);
+        color: var(--text-primary);
+        border: 1px solid var(--border-color);
+
+        &:hover:not(:disabled) {
+          background: var(--background-primary);
+          border-color: var(--text-secondary);
+        }
+
+        &:disabled {
+          cursor: not-allowed;
+          opacity: 0.6;
+        }
+      }
+    }
+  }
+
+  @media (max-width: 768px) {
+    .container {
+      padding: 0 $spacing-sm;
+    }
+
+    .sell-cars-header h1 {
+      font-size: 2rem;
+    }
+
+    .sell-car-form {
+      padding: $spacing-md;
+    }
+
+    .form-row {
+      grid-template-columns: 1fr;
+    }
+
+    .form-actions {
+      flex-direction: column;
+
+      .btn {
+        width: 100%;
+      }
+    }
+
+    .image-previews {
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    }
   }
 }
+

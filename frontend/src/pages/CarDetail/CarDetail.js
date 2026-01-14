@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useLanguage } from '../../context/LanguageContext';
-import { sampleCars } from '../../data/sampleCars';
+import api from '../../services/api';
 import './CarDetail.scss';
 
 const CarDetail = () => {
@@ -9,10 +9,52 @@ const CarDetail = () => {
   const navigate = useNavigate();
   const { translations } = useLanguage();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [car, setCar] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
-  const car = sampleCars.find(c => c.id === parseInt(id));
+  const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
-  if (!car) {
+  useEffect(() => {
+    const fetchCar = async () => {
+      try {
+        setLoading(true);
+        const response = await api.get(`/cars/${id}`);
+        if (response.data.success) {
+          setCar(response.data.data);
+        }
+      } catch (err) {
+        console.error('Error fetching car:', err);
+        setError('Failed to load car details');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCar();
+  }, [id]);
+
+  const getImageUrl = (imagePath) => {
+    if (imagePath.startsWith('http')) {
+      return imagePath;
+    }
+    return `${API_URL}${imagePath}`;
+  };
+
+  if (loading) {
+    return (
+      <div className="car-detail-page">
+        <div className="container">
+          <div className="loading-container">
+            <div className="spinner"></div>
+            <p>Loading car details...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !car) {
     return (
       <div className="car-detail-page">
         <div className="container">
@@ -61,7 +103,7 @@ const CarDetail = () => {
           <div className="gallery-section">
             <div className="main-image">
               <img 
-                src={car.images[currentImageIndex]} 
+                src={getImageUrl(car.images[currentImageIndex])} 
                 alt={`${car.brand} ${car.model}`}
                 onError={(e) => {
                   e.target.src = 'https://via.placeholder.com/800x600?text=Car+Image';
@@ -84,7 +126,7 @@ const CarDetail = () => {
                     onClick={() => setCurrentImageIndex(index)}
                   >
                     <img 
-                      src={image} 
+                      src={getImageUrl(image)} 
                       alt={`${car.brand} ${car.model} - ${index + 1}`}
                       onError={(e) => {
                         e.target.src = 'https://via.placeholder.com/150?text=Car';

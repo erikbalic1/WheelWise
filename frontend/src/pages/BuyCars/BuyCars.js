@@ -1,18 +1,29 @@
-import React, { useState, useMemo, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useLanguage } from '../../context/LanguageContext';
 import CarCard from '../../components/CarCard/CarCard';
-import { sampleCars, brands, bodyTypes, fuelTypes, colors } from '../../data/sampleCars';
+import api from '../../services/api';
 import './BuyCars.scss';
 
 const BuyCars = () => {
   const { translations } = useLanguage();
   const sectionsRef = useRef([]);
+  const [cars, setCars] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
+  const [filterOptions, setFilterOptions] = useState({
+    brands: [],
+    bodyTypes: [],
+    fuelTypes: [],
+    colors: [],
+    transmissions: []
+  });
   const [filters, setFilters] = useState({
     brand: 'All',
     bodyType: 'All',
     fuelType: 'All',
     color: 'All',
+    transmission: 'All',
     yearFrom: '',
     yearTo: '',
     kmFrom: '',
@@ -21,6 +32,77 @@ const BuyCars = () => {
     priceTo: ''
   });
   const [showFilters, setShowFilters] = useState(false);
+  const [pagination, setPagination] = useState({
+    page: 1,
+    limit: 12,
+    total: 0,
+    pages: 0
+  });
+
+  // Fetch filter options on mount
+  useEffect(() => {
+    const fetchFilterOptions = async () => {
+      try {
+        const response = await api.get('/filter-options');
+        if (response.data.success) {
+          setFilterOptions({
+            brands: ['All', ...response.data.data.brands],
+            bodyTypes: ['All', ...response.data.data.bodyTypes],
+            fuelTypes: ['All', ...response.data.data.fuelTypes],
+            colors: ['All', ...response.data.data.colors],
+            transmissions: ['All', ...response.data.data.transmissions]
+          });
+        }
+      } catch (err) {
+        console.error('Error fetching filter options:', err);
+      }
+    };
+    
+    fetchFilterOptions();
+  }, []);
+
+  // Fetch cars whenever filters or search changes
+  useEffect(() => {
+    const fetchCars = async () => {
+      setLoading(true);
+      setError('');
+      
+      try {
+        const params = {
+          page: pagination.page,
+          limit: pagination.limit,
+          search: searchQuery
+        };
+
+        // Add filters to params
+        Object.keys(filters).forEach(key => {
+          if (filters[key] && filters[key] !== 'All' && filters[key] !== '') {
+            params[key] = filters[key];
+          }
+        });
+
+        const response = await api.get('/cars', { params });
+        
+        if (response.data.success) {
+          setCars(response.data.data);
+          setPagination(prev => ({
+            ...prev,
+            total: response.data.pagination.total,
+            pages: response.data.pagination.pages
+          }));
+        }
+      } catch (err) {
+        console.error('Error fetching cars:', err);
+        setError('Failed to load cars. Please try again.');
+        // Fallback to empty array on error
+        setCars([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCars();
+  }, [searchQuery, filters, pagination.page, pagination.limit]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -67,6 +149,7 @@ const BuyCars = () => {
       bodyType: 'All',
       fuelType: 'All',
       color: 'All',
+      transmission: 'All',
       yearFrom: '',
       yearTo: '',
       kmFrom: '',
@@ -75,43 +158,15 @@ const BuyCars = () => {
       priceTo: ''
     });
     setSearchQuery('');
+    setPagination(prev => ({ ...prev, page: 1 }));
   };
 
-  const filteredCars = useMemo(() => {
-    return sampleCars.filter(car => {
-      // Search filter
-      const matchesSearch = searchQuery === '' || 
-        `${car.brand} ${car.model}`.toLowerCase().includes(searchQuery.toLowerCase());
+  const handlePageChange = (newPage) => {
+    setPagination(prev => ({ ...prev, page: newPage }));
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
-      // Brand filter
-      const matchesBrand = filters.brand === 'All' || car.brand === filters.brand;
-
-      // Body type filter
-      const matchesBodyType = filters.bodyType === 'All' || car.bodyType === filters.bodyType;
-
-      // Fuel type filter
-      const matchesFuelType = filters.fuelType === 'All' || car.fuelType === filters.fuelType;
-
-      // Color filter
-      const matchesColor = filters.color === 'All' || car.color === filters.color;
-
-      // Year filter
-      const matchesYearFrom = filters.yearFrom === '' || car.year >= parseInt(filters.yearFrom);
-      const matchesYearTo = filters.yearTo === '' || car.year <= parseInt(filters.yearTo);
-
-      // Kilometers filter
-      const matchesKmFrom = filters.kmFrom === '' || car.kilometers >= parseInt(filters.kmFrom);
-      const matchesKmTo = filters.kmTo === '' || car.kilometers <= parseInt(filters.kmTo);
-
-      // Price filter
-      const matchesPriceFrom = filters.priceFrom === '' || car.price >= parseInt(filters.priceFrom);
-      const matchesPriceTo = filters.priceTo === '' || car.price <= parseInt(filters.priceTo);
-
-      return matchesSearch && matchesBrand && matchesBodyType && matchesFuelType && 
-             matchesColor && matchesYearFrom && matchesYearTo && matchesKmFrom && 
-             matchesKmTo && matchesPriceFrom && matchesPriceTo;
-    });
-  }, [searchQuery, filters]);
+  const filteredCars = cars;
 
   return (
     <div className="buy-cars-page">
@@ -162,7 +217,7 @@ const BuyCars = () => {
                   value={filters.brand} 
                   onChange={(e) => handleFilterChange('brand', e.target.value)}
                 >
-                  {brands.map(brand => (
+                  {filterOptions.brands.map(brand => (
                     <option key={brand} value={brand}>{brand}</option>
                   ))}
                 </select>
@@ -175,7 +230,7 @@ const BuyCars = () => {
                   value={filters.bodyType} 
                   onChange={(e) => handleFilterChange('bodyType', e.target.value)}
                 >
-                  {bodyTypes.map(type => (
+                  {filterOptions.bodyTypes.map(type => (
                     <option key={type} value={type}>{type}</option>
                   ))}
                 </select>
@@ -188,7 +243,7 @@ const BuyCars = () => {
                   value={filters.fuelType} 
                   onChange={(e) => handleFilterChange('fuelType', e.target.value)}
                 >
-                  {fuelTypes.map(type => (
+                  {filterOptions.fuelTypes.map(type => (
                     <option key={type} value={type}>{type}</option>
                   ))}
                 </select>
@@ -201,8 +256,21 @@ const BuyCars = () => {
                   value={filters.color} 
                   onChange={(e) => handleFilterChange('color', e.target.value)}
                 >
-                  {colors.map(color => (
+                  {filterOptions.colors.map(color => (
                     <option key={color} value={color}>{color}</option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Transmission Filter */}
+              <div className="filter-group">
+                <label>{translations.buyCars?.transmissionLabel || 'Transmission'}</label>
+                <select 
+                  value={filters.transmission} 
+                  onChange={(e) => handleFilterChange('transmission', e.target.value)}
+                >
+                  {filterOptions.transmissions.map(type => (
+                    <option key={type} value={type}>{type}</option>
                   ))}
                 </select>
               </div>
@@ -281,18 +349,72 @@ const BuyCars = () => {
         {/* Results Count */}
         <div className="results-info">
           <p>
-            {translations.buyCars?.resultsCount || 'Showing'} <strong>{filteredCars.length}</strong> {translations.buyCars?.cars || 'cars'}
+            {translations.buyCars?.resultsCount || 'Showing'} <strong>{pagination.total}</strong> {translations.buyCars?.cars || 'cars'}
           </p>
         </div>
 
-        {/* Cars Grid */}
-        {filteredCars.length > 0 ? (
-          <div className="cars-grid fade-in-up" ref={(el) => (sectionsRef.current[3] = el)}>
-            {filteredCars.map(car => (
-              <CarCard key={car.id} car={car} />
-            ))}
+        {/* Loading State */}
+        {loading && (
+          <div className="loading-container">
+            <div className="spinner"></div>
+            <p>Loading cars...</p>
           </div>
-        ) : (
+        )}
+
+        {/* Error State */}
+        {error && (
+          <div className="error-message">
+            <p>{error}</p>
+            <button onClick={() => window.location.reload()}>Retry</button>
+          </div>
+        )}
+
+        {/* Cars Grid */}
+        {!loading && !error && filteredCars.length > 0 && (
+          <>
+            <div className="cars-grid fade-in-up" ref={(el) => (sectionsRef.current[3] = el)}>
+              {filteredCars.map(car => (
+                <CarCard key={car._id} car={car} />
+              ))}
+            </div>
+
+            {/* Pagination */}
+            {pagination.pages > 1 && (
+              <div className="pagination">
+                <button
+                  onClick={() => handlePageChange(pagination.page - 1)}
+                  disabled={pagination.page === 1}
+                  className="pagination-btn"
+                >
+                  ← Previous
+                </button>
+                
+                <div className="page-numbers">
+                  {[...Array(pagination.pages)].map((_, i) => (
+                    <button
+                      key={i + 1}
+                      onClick={() => handlePageChange(i + 1)}
+                      className={`page-number ${pagination.page === i + 1 ? 'active' : ''}`}
+                    >
+                      {i + 1}
+                    </button>
+                  ))}
+                </div>
+
+                <button
+                  onClick={() => handlePageChange(pagination.page + 1)}
+                  disabled={pagination.page === pagination.pages}
+                  className="pagination-btn"
+                >
+                  Next →
+                </button>
+              </div>
+            )}
+          </>
+        )}
+        
+        {/* No Results */}
+        {!loading && !error && filteredCars.length === 0 && (
           <div className="no-results">
             <span className="no-results-icon">🚗</span>
             <h3>{translations.buyCars?.noResults || 'No cars found'}</h3>

@@ -8,6 +8,17 @@ const CarCard = ({ car }) => {
   const { translations } = useLanguage();
   const navigate = useNavigate();
 
+  const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+
+  const getImageUrl = (imagePath) => {
+    // If it's already a full URL, return as is
+    if (imagePath.startsWith('http')) {
+      return imagePath;
+    }
+    // Otherwise, prepend the API URL
+    return `${API_URL}${imagePath}`;
+  };
+
   const nextImage = (e) => {
     e.stopPropagation();
     setCurrentImageIndex((prev) => 
@@ -23,7 +34,7 @@ const CarCard = ({ car }) => {
   };
 
   const handleViewOffer = () => {
-    navigate(`/buy-cars/${car.id}`);
+    navigate(`/car/${car._id || car.id}`);
   };
 
   const formatPrice = (price) => {
@@ -38,7 +49,7 @@ const CarCard = ({ car }) => {
     <div className="car-card">
       <div className="car-image-container">
         <img 
-          src={car.images[currentImageIndex]} 
+          src={getImageUrl(car.images[currentImageIndex])} 
           alt={`${car.brand} ${car.model}`}
           onError={(e) => {
             e.target.src = 'https://via.placeholder.com/400x300?text=Car+Image';
