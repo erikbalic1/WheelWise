@@ -416,7 +416,14 @@ const BuyCars = () => {
         {/* No Results */}
         {!loading && !error && filteredCars.length === 0 && (
           <div className="no-results">
-            <span className="no-results-icon">🚗</span>
+            <div className="no-results-icon">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="12" r="10" stroke="#2c3e50" strokeWidth="2"/>
+                <circle cx="9" cy="9" r="1.5" fill="#2c3e50"/>
+                <circle cx="15" cy="9" r="1.5" fill="#2c3e50"/>
+                <path d="M8 16C8 16 9.5 14 12 14C14.5 14 16 16 16 16" stroke="#2c3e50" strokeWidth="2" strokeLinecap="round"/>
+              </svg>
+            </div>
             <h3>{translations.buyCars?.noResults || 'No cars found'}</h3>
             <p>{translations.buyCars?.noResultsText || 'Try adjusting your filters or search query'}</p>
             <button className="btn-clear" onClick={clearFilters}>
