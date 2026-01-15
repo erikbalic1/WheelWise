@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { useLanguage } from '../../context/LanguageContext';
 import api from '../../services/api';
 import './SellCars.scss';
 
 const SellCars = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { translations } = useLanguage();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -58,7 +60,7 @@ const SellCars = () => {
     const files = Array.from(e.target.files);
     
     if (files.length > 10) {
-      setError('Maximum 10 images allowed');
+      setError(translations.sellCar?.errorMaxImages || 'Maximum 10 images allowed');
       return;
     }
 
@@ -69,7 +71,7 @@ const SellCars = () => {
     const invalidFiles = files.filter(file => file.size > maxSize);
     
     if (invalidFiles.length > 0) {
-      setError('Each image must be smaller than 5MB');
+      setError(translations.sellCar?.errorImageSize || 'Each image must be smaller than 5MB');
       return;
     }
 
@@ -102,18 +104,18 @@ const SellCars = () => {
 
     // Validation
     if (!user) {
-      setError('You must be logged in to sell a car');
+      setError(translations.sellCar?.errorLogin || 'You must be logged in to sell a car');
       setTimeout(() => navigate('/auth'), 2000);
       return;
     }
 
     if (formData.images.length === 0) {
-      setError('Please upload at least one image');
+      setError(translations.sellCar?.errorUploadImages || 'Please upload at least one image');
       return;
     }
 
     if (!formData.brand || !formData.model || !formData.price || !formData.kilometers) {
-      setError('Please fill in all required fields');
+      setError(translations.sellCar?.errorFillRequired || 'Please fill in all required fields');
       return;
     }
 
@@ -149,7 +151,7 @@ const SellCars = () => {
       });
 
       if (response.data.success) {
-        setSuccess('Car listed successfully! Redirecting...');
+        setSuccess(translations.sellCar?.successMessage || 'Car listed successfully! Redirecting...');
         // Reset form
         setFormData({
           brand: '',
@@ -178,7 +180,7 @@ const SellCars = () => {
       }
     } catch (err) {
       console.error('Error creating listing:', err);
-      setError(err.response?.data?.message || 'Failed to create listing. Please try again.');
+      setError(err.response?.data?.message || translations.sellCar?.errorMessage || 'Failed to create listing. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -188,8 +190,8 @@ const SellCars = () => {
     <div className="sell-cars-page">
       <div className="container">
         <div className="sell-cars-header">
-          <h1>Sell Your Car</h1>
-          <p>List your vehicle and reach thousands of potential buyers</p>
+          <h1>{translations.sellCar?.title || 'Sell Your Car'}</h1>
+          <p>{translations.sellCar?.subtitle || 'List your vehicle and reach thousands of potential buyers'}</p>
         </div>
 
         {error && <div className="alert alert-error">{error}</div>}
@@ -198,8 +200,8 @@ const SellCars = () => {
         <form onSubmit={handleSubmit} className="sell-car-form">
           {/* Image Upload Section */}
           <div className="form-section">
-            <h2>Photos</h2>
-            <p className="section-description">Upload up to 10 photos of your car (Max 5MB each)</p>
+            <h2>{translations.sellCar?.photosTitle || 'Photos'}</h2>
+            <p className="section-description">{translations.sellCar?.photosDescription || 'Upload up to 10 photos of your car (Max 5MB each)'}</p>
             
             <div className="image-upload-container">
               <label htmlFor="images" className="image-upload-label">
@@ -209,7 +211,7 @@ const SellCars = () => {
                     <path d="M12 17C14.2091 17 16 15.2091 16 13C16 10.7909 14.2091 9 12 9C9.79086 9 8 10.7909 8 13C8 15.2091 9.79086 17 12 17Z" stroke="#2c3e50" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                   </svg>
                 </div>
-                <span>Click to upload images</span>
+                <span>{translations.sellCar?.uploadButton || 'Click to upload images'}</span>
                 <input
                   type="file"
                   id="images"
@@ -233,7 +235,7 @@ const SellCars = () => {
                       >
                         ×
                       </button>
-                      {index === 0 && <span className="primary-badge">Primary</span>}
+                      {index === 0 && <span className="primary-badge">{translations.sellCar?.primaryBadge || 'Primary'}</span>}
                     </div>
                   ))}
                 </div>
@@ -243,11 +245,11 @@ const SellCars = () => {
 
           {/* Basic Information */}
           <div className="form-section">
-            <h2>Basic Information</h2>
+            <h2>{translations.sellCar?.basicInfoTitle || 'Basic Information'}</h2>
             
             <div className="form-row">
               <div className="form-group">
-                <label htmlFor="brand">Brand *</label>
+                <label htmlFor="brand">{translations.sellCar?.brandLabel || 'Brand'} *</label>
                 <select
                   id="brand"
                   name="brand"
@@ -255,7 +257,7 @@ const SellCars = () => {
                   onChange={handleChange}
                   required
                 >
-                  <option value="">Select Brand</option>
+                  <option value="">{translations.sellCar?.selectBrand || 'Select Brand'}</option>
                   {brands.map(brand => (
                     <option key={brand} value={brand}>{brand}</option>
                   ))}
@@ -263,14 +265,14 @@ const SellCars = () => {
               </div>
 
               <div className="form-group">
-                <label htmlFor="model">Model *</label>
+                <label htmlFor="model">{translations.sellCar?.modelLabel || 'Model'} *</label>
                 <input
                   type="text"
                   id="model"
                   name="model"
                   value={formData.model}
                   onChange={handleChange}
-                  placeholder="e.g., Civic, Camry, 3 Series"
+                  placeholder={translations.sellCar?.modelPlaceholder || 'e.g., Civic, Camry, 3 Series'}
                   required
                 />
               </div>
@@ -278,7 +280,7 @@ const SellCars = () => {
 
             <div className="form-row">
               <div className="form-group">
-                <label htmlFor="year">Year *</label>
+                <label htmlFor="year">{translations.sellCar?.yearLabel || 'Year'} *</label>
                 <input
                   type="number"
                   id="year"
@@ -292,14 +294,14 @@ const SellCars = () => {
               </div>
 
               <div className="form-group">
-                <label htmlFor="price">Price (€) *</label>
+                <label htmlFor="price">{translations.sellCar?.priceLabel || 'Price (€)'} *</label>
                 <input
                   type="number"
                   id="price"
                   name="price"
                   value={formData.price}
                   onChange={handleChange}
-                  placeholder="e.g., 15000"
+                  placeholder={translations.sellCar?.pricePlaceholder || 'e.g., 15000'}
                   min="0"
                   required
                 />
@@ -308,21 +310,21 @@ const SellCars = () => {
 
             <div className="form-row">
               <div className="form-group">
-                <label htmlFor="kilometers">Kilometers *</label>
+                <label htmlFor="kilometers">{translations.sellCar?.kilometersLabel || 'Kilometers'} *</label>
                 <input
                   type="number"
                   id="kilometers"
                   name="kilometers"
                   value={formData.kilometers}
                   onChange={handleChange}
-                  placeholder="e.g., 50000"
+                  placeholder={translations.sellCar?.kilometersPlaceholder || 'e.g., 50000'}
                   min="0"
                   required
                 />
               </div>
 
               <div className="form-group">
-                <label htmlFor="condition">Condition *</label>
+                <label htmlFor="condition">{translations.sellCar?.conditionLabel || 'Condition'} *</label>
                 <select
                   id="condition"
                   name="condition"
@@ -340,11 +342,11 @@ const SellCars = () => {
 
           {/* Technical Specifications */}
           <div className="form-section">
-            <h2>Technical Specifications</h2>
+            <h2>{translations.sellCar?.technicalSpecsTitle || 'Technical Specifications'}</h2>
             
             <div className="form-row">
               <div className="form-group">
-                <label htmlFor="bodyType">Body Type *</label>
+                <label htmlFor="bodyType">{translations.sellCar?.bodyTypeLabel || 'Body Type'} *</label>
                 <select
                   id="bodyType"
                   name="bodyType"
@@ -359,7 +361,7 @@ const SellCars = () => {
               </div>
 
               <div className="form-group">
-                <label htmlFor="color">Color *</label>
+                <label htmlFor="color">{translations.sellCar?.colorLabel || 'Color'} *</label>
                 <select
                   id="color"
                   name="color"
@@ -367,7 +369,7 @@ const SellCars = () => {
                   onChange={handleChange}
                   required
                 >
-                  <option value="">Select Color</option>
+                  <option value="">{translations.sellCar?.selectColor || 'Select Color'}</option>
                   {colors.map(color => (
                     <option key={color} value={color}>{color}</option>
                   ))}
@@ -377,7 +379,7 @@ const SellCars = () => {
 
             <div className="form-row">
               <div className="form-group">
-                <label htmlFor="fuelType">Fuel Type *</label>
+                <label htmlFor="fuelType">{translations.sellCar?.fuelTypeLabel || 'Fuel Type'} *</label>
                 <select
                   id="fuelType"
                   name="fuelType"
@@ -392,7 +394,7 @@ const SellCars = () => {
               </div>
 
               <div className="form-group">
-                <label htmlFor="transmission">Transmission *</label>
+                <label htmlFor="transmission">{translations.sellCar?.transmissionLabel || 'Transmission'} *</label>
                 <select
                   id="transmission"
                   name="transmission"
@@ -409,28 +411,28 @@ const SellCars = () => {
 
             <div className="form-row">
               <div className="form-group">
-                <label htmlFor="power">Power (HP) *</label>
+                <label htmlFor="power">{translations.sellCar?.powerLabel || 'Power (HP)'} *</label>
                 <input
                   type="number"
                   id="power"
                   name="power"
                   value={formData.power}
                   onChange={handleChange}
-                  placeholder="e.g., 150"
+                  placeholder={translations.sellCar?.powerPlaceholder || 'e.g., 150'}
                   min="0"
                   required
                 />
               </div>
 
               <div className="form-group">
-                <label htmlFor="location">Location *</label>
+                <label htmlFor="location">{translations.sellCar?.locationLabel || 'Location'} *</label>
                 <input
                   type="text"
                   id="location"
                   name="location"
                   value={formData.location}
                   onChange={handleChange}
-                  placeholder="e.g., Budapest, Hungary"
+                  placeholder={translations.sellCar?.locationPlaceholder || 'e.g., Budapest, Hungary'}
                   required
                 />
               </div>
@@ -439,16 +441,16 @@ const SellCars = () => {
 
           {/* Additional Details */}
           <div className="form-section">
-            <h2>Additional Details</h2>
+            <h2>{translations.sellCar?.additionalDetailsTitle || 'Additional Details'}</h2>
             
             <div className="form-group full-width">
-              <label htmlFor="description">Description *</label>
+              <label htmlFor="description">{translations.sellCar?.descriptionLabel || 'Description'} *</label>
               <textarea
                 id="description"
                 name="description"
                 value={formData.description}
                 onChange={handleChange}
-                placeholder="Describe your car, its condition, service history, and any other relevant details..."
+                placeholder={translations.sellCar?.descriptionPlaceholder || 'Describe your car, its condition, service history, and any other relevant details...'}
                 rows="5"
                 maxLength="2000"
                 required
@@ -457,45 +459,45 @@ const SellCars = () => {
             </div>
 
             <div className="form-group full-width">
-              <label htmlFor="features">Features (comma-separated)</label>
+              <label htmlFor="features">{translations.sellCar?.featuresLabel || 'Features (comma-separated)'}</label>
               <input
                 type="text"
                 id="features"
                 name="features"
                 value={formData.features}
                 onChange={handleChange}
-                placeholder="e.g., Leather seats, Navigation, Sunroof, Bluetooth"
+                placeholder={translations.sellCar?.featuresPlaceholder || 'e.g., Leather seats, Navigation, Sunroof, Bluetooth'}
               />
             </div>
           </div>
 
           {/* Contact Information */}
           <div className="form-section">
-            <h2>Contact Information</h2>
+            <h2>{translations.sellCar?.contactInfoTitle || 'Contact Information'}</h2>
             
             <div className="form-row">
               <div className="form-group">
-                <label htmlFor="sellerPhone">Phone Number *</label>
+                <label htmlFor="sellerPhone">{translations.sellCar?.phoneLabel || 'Phone Number'} *</label>
                 <input
                   type="tel"
                   id="sellerPhone"
                   name="sellerPhone"
                   value={formData.sellerPhone}
                   onChange={handleChange}
-                  placeholder="e.g., +36 20 123 4567"
+                  placeholder={translations.sellCar?.phonePlaceholder || 'e.g., +36 20 123 4567'}
                   required
                 />
               </div>
 
               <div className="form-group">
-                <label>Email</label>
+                <label>{translations.sellCar?.emailLabel || 'Email'}</label>
                 <input
                   type="email"
                   value={user?.email || ''}
                   disabled
                   className="disabled-input"
                 />
-                <small>Email from your account</small>
+                <small>{translations.sellCar?.emailNote || 'Email from your account'}</small>
               </div>
             </div>
           </div>
@@ -507,14 +509,14 @@ const SellCars = () => {
               className="btn btn-secondary"
               disabled={loading}
             >
-              Cancel
+              {translations.sellCar?.cancelButton || 'Cancel'}
             </button>
             <button
               type="submit"
               className="btn btn-primary"
               disabled={loading}
             >
-              {loading ? 'Creating Listing...' : 'List Car for Sale'}
+              {loading ? (translations.sellCar?.submittingButton || 'Creating Listing...') : (translations.sellCar?.submitButton || 'List Car for Sale')}
             </button>
           </div>
         </form>

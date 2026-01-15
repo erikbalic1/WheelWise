@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../context/AuthContext';
+import { useLanguage } from '../../context/LanguageContext';
 import api from '../../services/api';
 import './Profile.scss';
 
 const Profile = () => {
   const { user, updateUser } = useAuth();
+  const { translations } = useLanguage();
   
   // Form states
   const [activeTab, setActiveTab] = useState('general');
@@ -91,12 +93,12 @@ const Profile = () => {
 
       if (response.data.success) {
         updateUser(response.data.user);
-        setMessage({ type: 'success', text: 'Profile updated successfully!' });
+        setMessage({ type: 'success', text: translations.profile?.successUpdate || 'Profile updated successfully!' });
       }
     } catch (error) {
       setMessage({
         type: 'error',
-        text: error.response?.data?.message || 'Failed to update profile'
+        text: error.response?.data?.message || translations.profile?.errorUpdate || 'Failed to update profile'
       });
     } finally {
       setLoading(false);
@@ -111,13 +113,13 @@ const Profile = () => {
 
     // Validate passwords
     if (passwordData.newPassword !== passwordData.confirmPassword) {
-      setMessage({ type: 'error', text: 'New passwords do not match' });
+      setMessage({ type: 'error', text: translations.profile?.errorPasswordMatch || 'New passwords do not match' });
       setLoading(false);
       return;
     }
 
     if (passwordData.newPassword.length < 6) {
-      setMessage({ type: 'error', text: 'Password must be at least 6 characters long' });
+      setMessage({ type: 'error', text: translations.profile?.newPasswordNote || 'Password must be at least 6 characters long' });
       setLoading(false);
       return;
     }
@@ -129,7 +131,7 @@ const Profile = () => {
       });
 
       if (response.data.success) {
-        setMessage({ type: 'success', text: 'Password updated successfully!' });
+        setMessage({ type: 'success', text: translations.profile?.successPassword || 'Password updated successfully!' });
         setPasswordData({
           currentPassword: '',
           newPassword: '',
@@ -139,7 +141,7 @@ const Profile = () => {
     } catch (error) {
       setMessage({
         type: 'error',
-        text: error.response?.data?.message || 'Failed to update password'
+        text: error.response?.data?.message || translations.profile?.errorPassword || 'Failed to update password'
       });
     } finally {
       setLoading(false);
@@ -159,12 +161,12 @@ const Profile = () => {
 
       if (response.data.success) {
         updateUser(response.data.user);
-        setMessage({ type: 'success', text: 'Avatar updated successfully!' });
+        setMessage({ type: 'success', text: translations.profile?.successAvatar || 'Avatar updated successfully!' });
       }
     } catch (error) {
       setMessage({
         type: 'error',
-        text: error.response?.data?.message || 'Failed to update avatar'
+        text: error.response?.data?.message || translations.profile?.errorAvatar || 'Failed to update avatar'
       });
     } finally {
       setLoading(false);
@@ -220,20 +222,20 @@ const Profile = () => {
             className={`tab ${activeTab === 'general' ? 'active' : ''}`}
             onClick={() => setActiveTab('general')}
           >
-            General Info
+            {translations.profile?.generalTab || 'General Info'}
           </button>
           <button
             className={`tab ${activeTab === 'avatar' ? 'active' : ''}`}
             onClick={() => setActiveTab('avatar')}
           >
-            Profile Picture
+            {translations.profile?.avatarTab || 'Profile Picture'}
           </button>
           {user?.provider === 'local' && (
             <button
               className={`tab ${activeTab === 'password' ? 'active' : ''}`}
               onClick={() => setActiveTab('password')}
             >
-              Change Password
+              {translations.profile?.passwordTab || 'Change Password'}
             </button>
           )}
         </div>
@@ -242,9 +244,9 @@ const Profile = () => {
           {/* General Info Tab */}
           {activeTab === 'general' && (
             <form className="profile-form" onSubmit={handleUpdateGeneral}>
-              <h2>General Information</h2>
+              <h2>{translations.profile?.generalTitle || 'General Information'}</h2>
               <div className="form-group">
-                <label htmlFor="name">Full Name</label>
+                <label htmlFor="name">{translations.profile?.nameLabel || 'Full Name'}</label>
                 <input
                   type="text"
                   id="name"
@@ -256,7 +258,7 @@ const Profile = () => {
               </div>
 
               <div className="form-group">
-                <label htmlFor="email">Email Address</label>
+                <label htmlFor="email">{translations.profile?.emailLabel || 'Email Address'}</label>
                 <input
                   type="email"
                   id="email"
@@ -268,9 +270,9 @@ const Profile = () => {
               </div>
 
               <div className="form-info">
-                <p><strong>Account Type:</strong> {user?.provider}</p>
-                <p><strong>Member Since:</strong> {new Date(user?.createdAt).toLocaleDateString()}</p>
-                <p><strong>Verification Status:</strong> {user?.isVerified ? 'Verified' : 'Not Verified'}</p>
+                <p><strong>{translations.profile?.accountTypeLabel || 'Account Type'}:</strong> {user?.provider}</p>
+                <p><strong>{translations.profile?.memberSinceLabel || 'Member Since'}:</strong> {new Date(user?.createdAt).toLocaleDateString()}</p>
+                <p><strong>{translations.profile?.verificationLabel || 'Verification Status'}:</strong> {user?.isVerified ? (translations.profile?.verified || 'Verified') : (translations.profile?.notVerified || 'Not Verified')}</p>
               </div>
 
               <button 
@@ -278,7 +280,7 @@ const Profile = () => {
                 className="btn-primary"
                 disabled={loading}
               >
-                {loading ? 'Updating...' : 'Save Changes'}
+                {loading ? (translations.profile?.updatingButton || 'Updating...') : (translations.profile?.saveButton || 'Save Changes')}
               </button>
             </form>
           )}
@@ -286,7 +288,7 @@ const Profile = () => {
           {/* Avatar Tab */}
           {activeTab === 'avatar' && (
             <form className="profile-form" onSubmit={handleUpdateAvatar}>
-              <h2>Profile Picture</h2>
+              <h2>{translations.profile?.avatarTitle || 'Profile Picture'}</h2>
               <div className="avatar-preview-section">
                 <div className="avatar-preview-large">
                   {previewAvatar ? (
@@ -306,20 +308,20 @@ const Profile = () => {
               </div>
 
               <div className="form-group">
-                <label htmlFor="avatar">Avatar URL</label>
+                <label htmlFor="avatar">{translations.profile?.avatarUrlLabel || 'Avatar URL'}</label>
                 <input
                   type="url"
                   id="avatar"
                   name="avatar"
                   value={avatarUrl}
                   onChange={handleAvatarChange}
-                  placeholder="https://example.com/avatar.jpg"
+                  placeholder={translations.profile?.avatarUrlPlaceholder || 'https://example.com/avatar.jpg'}
                 />
-                <small>Enter a URL to your profile picture</small>
+                <small>{translations.profile?.avatarUrlNote || 'Enter a URL to your profile picture'}</small>
               </div>
 
               <div className="avatar-suggestions">
-                <p>Try these avatar services:</p>
+                <p>{translations.profile?.avatarServicesTitle || 'Try these avatar services:'}</p>
                 <ul>
                   <li><a href="https://gravatar.com" target="_blank" rel="noopener noreferrer">Gravatar</a></li>
                   <li><a href="https://ui-avatars.com" target="_blank" rel="noopener noreferrer">UI Avatars</a></li>
@@ -332,7 +334,7 @@ const Profile = () => {
                 className="btn-primary"
                 disabled={loading}
               >
-                {loading ? 'Updating...' : 'Update Avatar'}
+                {loading ? (translations.profile?.updatingButton || 'Updating...') : (translations.profile?.updateAvatarButton || 'Update Avatar')}
               </button>
             </form>
           )}
@@ -340,9 +342,9 @@ const Profile = () => {
           {/* Password Tab */}
           {activeTab === 'password' && user?.provider === 'local' && (
             <form className="profile-form" onSubmit={handleUpdatePassword}>
-              <h2>Change Password</h2>
+              <h2>{translations.profile?.passwordTitle || 'Change Password'}</h2>
               <div className="form-group">
-                <label htmlFor="currentPassword">Current Password</label>
+                <label htmlFor="currentPassword">{translations.profile?.currentPasswordLabel || 'Current Password'}</label>
                 <input
                   type="password"
                   id="currentPassword"
@@ -354,7 +356,7 @@ const Profile = () => {
               </div>
 
               <div className="form-group">
-                <label htmlFor="newPassword">New Password</label>
+                <label htmlFor="newPassword">{translations.profile?.newPasswordLabel || 'New Password'}</label>
                 <input
                   type="password"
                   id="newPassword"
@@ -364,11 +366,11 @@ const Profile = () => {
                   required
                   minLength="6"
                 />
-                <small>Password must be at least 6 characters long</small>
+                <small>{translations.profile?.newPasswordNote || 'Password must be at least 6 characters long'}</small>
               </div>
 
               <div className="form-group">
-                <label htmlFor="confirmPassword">Confirm New Password</label>
+                <label htmlFor="confirmPassword">{translations.profile?.confirmPasswordLabel || 'Confirm New Password'}</label>
                 <input
                   type="password"
                   id="confirmPassword"
@@ -385,7 +387,7 @@ const Profile = () => {
                 className="btn-primary"
                 disabled={loading}
               >
-                {loading ? 'Updating...' : 'Change Password'}
+                {loading ? (translations.profile?.updatingButton || 'Updating...') : (translations.profile?.changePasswordButton || 'Change Password')}
               </button>
             </form>
           )}
