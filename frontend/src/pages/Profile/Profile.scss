@@ -339,6 +339,44 @@
           }
         }
       }
+
+      .mfa-setup-box {
+        margin-top: 1.5rem;
+        background: var(--background-light);
+        border: 1px solid var(--border-color);
+        border-radius: $border-radius-md;
+        padding: 1.5rem;
+
+        .mfa-qr {
+          width: 220px;
+          max-width: 100%;
+          display: block;
+          margin: 0 auto 1rem;
+          border-radius: $border-radius-md;
+          background: #fff;
+          padding: 0.75rem;
+        }
+
+        p {
+          margin-bottom: 0.5rem;
+          color: var(--text-primary);
+        }
+
+        code {
+          display: block;
+          margin-bottom: 1rem;
+          word-break: break-all;
+          background: var(--background-white);
+          border: 1px solid var(--border-color);
+          border-radius: $border-radius-sm;
+          padding: 0.75rem;
+          color: var(--text-primary);
+        }
+      }
+
+      .mfa-code-form {
+        margin-top: 1rem;
+      }
     }
   }
 }

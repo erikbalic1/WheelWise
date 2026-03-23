@@ -13,7 +13,6 @@ import AskAI from './pages/AskAI/AskAI';
 import About from './pages/About/About';
 import Contact from './pages/Contact/Contact';
 import Auth from './pages/Auth/Auth';
-import AuthCallback from './pages/Auth/AuthCallback';
 import Profile from './pages/Profile/Profile';
 import SellCars from './pages/SellCars/SellCars';
 import './styles/global.scss';
@@ -37,7 +36,6 @@ function App() {
                 <Route path="/about" element={<About />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/auth" element={<Auth />} />
-                <Route path="/auth/callback" element={<AuthCallback />} />
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/sell-cars" element={<SellCars />} />
               </Routes>

@@ -34,14 +34,22 @@ export const AuthProvider = ({ children }) => {
     checkAuth();
   }, []);
 
-  const login = async (email, password) => {
+  const login = async (email, password, mfaCode = '') => {
     try {
-      const response = await api.post('/auth/login', { email, password });
+      const response = await api.post('/auth/login', { email, password, mfaCode });
       const { token, user } = response.data;
       localStorage.setItem('token', token);
       setUser(user);
       return { success: true, user };
     } catch (error) {
+      if (error.response?.data?.mfaRequired) {
+        return {
+          success: false,
+          mfaRequired: true,
+          message: error.response?.data?.message || 'MFA code is required'
+        };
+      }
+
       return {
         success: false,
         message: error.response?.data?.message || 'Login failed'

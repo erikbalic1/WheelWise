@@ -56,6 +56,14 @@ const Profile = () => {
   // Avatar state
   const [avatarUrl, setAvatarUrl] = useState(user?.avatar || '');
   const [previewAvatar, setPreviewAvatar] = useState(user?.avatar || '');
+  
+  // MFA state
+  const [mfaSetup, setMfaSetup] = useState({
+    qrCode: '',
+    manualEntryKey: ''
+  });
+  const [mfaEnableCode, setMfaEnableCode] = useState('');
+  const [mfaDisableCode, setMfaDisableCode] = useState('');
 
   // Handle general info change
   const handleGeneralChange = (e) => {
@@ -77,6 +85,85 @@ const Profile = () => {
   const handleAvatarChange = (e) => {
     setAvatarUrl(e.target.value);
     setPreviewAvatar(e.target.value);
+  };
+
+  // Initialize MFA setup and fetch QR code
+  const handleSetupMfa = async () => {
+    setLoading(true);
+    setMessage({ type: '', text: '' });
+
+    try {
+      const response = await api.post('/auth/mfa/setup');
+
+      if (response.data.success) {
+        setMfaSetup({
+          qrCode: response.data.qrCode,
+          manualEntryKey: response.data.manualEntryKey
+        });
+        setMessage({ type: 'success', text: 'Scan the QR code with Google Authenticator and enter the 6-digit code to enable MFA.' });
+      }
+    } catch (error) {
+      setMessage({
+        type: 'error',
+        text: error.response?.data?.message || 'Failed to initialize MFA setup'
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Enable MFA after code verification
+  const handleEnableMfa = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setMessage({ type: '', text: '' });
+
+    try {
+      const response = await api.post('/auth/mfa/enable', {
+        code: mfaEnableCode
+      });
+
+      if (response.data.success) {
+        updateUser(response.data.user);
+        setMfaEnableCode('');
+        setMfaSetup({ qrCode: '', manualEntryKey: '' });
+        setMessage({ type: 'success', text: 'MFA enabled successfully!' });
+      }
+    } catch (error) {
+      setMessage({
+        type: 'error',
+        text: error.response?.data?.message || 'Failed to enable MFA'
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Disable MFA after code verification
+  const handleDisableMfa = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setMessage({ type: '', text: '' });
+
+    try {
+      const response = await api.post('/auth/mfa/disable', {
+        code: mfaDisableCode
+      });
+
+      if (response.data.success) {
+        updateUser(response.data.user);
+        setMfaDisableCode('');
+        setMfaSetup({ qrCode: '', manualEntryKey: '' });
+        setMessage({ type: 'success', text: 'MFA disabled successfully!' });
+      }
+    } catch (error) {
+      setMessage({
+        type: 'error',
+        text: error.response?.data?.message || 'Failed to disable MFA'
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   // Update general info
@@ -238,6 +325,12 @@ const Profile = () => {
               {translations.profile?.passwordTab || 'Change Password'}
             </button>
           )}
+          <button
+            className={`tab ${activeTab === 'mfa' ? 'active' : ''}`}
+            onClick={() => setActiveTab('mfa')}
+          >
+            MFA Security
+          </button>
         </div>
 
         <div className="profile-content fade-in-up" ref={contentRef}>
@@ -273,6 +366,7 @@ const Profile = () => {
                 <p><strong>{translations.profile?.accountTypeLabel || 'Account Type'}:</strong> {user?.provider}</p>
                 <p><strong>{translations.profile?.memberSinceLabel || 'Member Since'}:</strong> {new Date(user?.createdAt).toLocaleDateString()}</p>
                 <p><strong>{translations.profile?.verificationLabel || 'Verification Status'}:</strong> {user?.isVerified ? (translations.profile?.verified || 'Verified') : (translations.profile?.notVerified || 'Not Verified')}</p>
+                <p><strong>MFA:</strong> {user?.mfaEnabled ? 'Enabled' : 'Disabled'}</p>
               </div>
 
               <button 
@@ -390,6 +484,77 @@ const Profile = () => {
                 {loading ? (translations.profile?.updatingButton || 'Updating...') : (translations.profile?.changePasswordButton || 'Change Password')}
               </button>
             </form>
+          )}
+
+          {activeTab === 'mfa' && (
+            <div className="profile-form">
+              <h2>MFA Security</h2>
+              <div className="form-info">
+                <p><strong>Status:</strong> {user?.mfaEnabled ? 'Enabled' : 'Disabled'}</p>
+                <p><strong>App:</strong> Google Authenticator</p>
+              </div>
+
+              {!user?.mfaEnabled && (
+                <>
+                  <button
+                    type="button"
+                    className="btn-primary"
+                    onClick={handleSetupMfa}
+                    disabled={loading}
+                  >
+                    {loading ? 'Preparing...' : 'Generate QR Code'}
+                  </button>
+
+                  {mfaSetup.qrCode && (
+                    <div className="mfa-setup-box">
+                      <img src={mfaSetup.qrCode} alt="MFA QR code" className="mfa-qr" />
+                      <p>Can&apos;t scan? Use this key:</p>
+                      <code>{mfaSetup.manualEntryKey}</code>
+
+                      <form onSubmit={handleEnableMfa} className="mfa-code-form">
+                        <div className="form-group">
+                          <label htmlFor="mfaEnableCode">Verification Code</label>
+                          <input
+                            type="text"
+                            id="mfaEnableCode"
+                            value={mfaEnableCode}
+                            onChange={(e) => setMfaEnableCode(e.target.value)}
+                            placeholder="Enter 6-digit code"
+                            maxLength="6"
+                            inputMode="numeric"
+                            required
+                          />
+                        </div>
+                        <button type="submit" className="btn-primary" disabled={loading}>
+                          {loading ? 'Enabling...' : 'Enable MFA'}
+                        </button>
+                      </form>
+                    </div>
+                  )}
+                </>
+              )}
+
+              {user?.mfaEnabled && (
+                <form onSubmit={handleDisableMfa} className="mfa-code-form">
+                  <div className="form-group">
+                    <label htmlFor="mfaDisableCode">Current Authenticator Code</label>
+                    <input
+                      type="text"
+                      id="mfaDisableCode"
+                      value={mfaDisableCode}
+                      onChange={(e) => setMfaDisableCode(e.target.value)}
+                      placeholder="Enter 6-digit code"
+                      maxLength="6"
+                      inputMode="numeric"
+                      required
+                    />
+                  </div>
+                  <button type="submit" className="btn-primary" disabled={loading}>
+                    {loading ? 'Disabling...' : 'Disable MFA'}
+                  </button>
+                </form>
+              )}
+            </div>
           )}
         </div>
       </div>

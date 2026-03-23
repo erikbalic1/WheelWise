@@ -1,11 +1,8 @@
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
-const session = require('express-session');
-const cookieParser = require('cookie-parser');
 const path = require('path');
 const connectDB = require('./config/database');
-const passport = require('./config/passport');
 
 // Load environment variables
 dotenv.config();
@@ -20,26 +17,9 @@ app.use(cors({
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
 
 // Serve static files (uploaded images)
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
-
-// Session configuration (required for OAuth)
-app.use(session({
-  secret: process.env.SESSION_SECRET || 'your-secret-key',
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
-    secure: process.env.NODE_ENV === 'production',
-    httpOnly: true,
-    maxAge: 24 * 60 * 60 * 1000 // 24 hours
-  }
-}));
-
-// Initialize Passport and session
-app.use(passport.initialize());
-app.use(passport.session());
 
 // Connect to database
 connectDB();

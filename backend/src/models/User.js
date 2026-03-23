@@ -11,25 +11,13 @@ const userSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    required: function() {
-      // Password is required only if not using OAuth
-      return !this.googleId && !this.facebookId;
-    }
+    required: true,
+    select: false
   },
   name: {
     type: String,
     required: true,
     trim: true
-  },
-  googleId: {
-    type: String,
-    unique: true,
-    sparse: true
-  },
-  facebookId: {
-    type: String,
-    unique: true,
-    sparse: true
   },
   avatar: {
     type: String,
@@ -37,8 +25,22 @@ const userSchema = new mongoose.Schema({
   },
   provider: {
     type: String,
-    enum: ['local', 'google', 'facebook'],
+    enum: ['local'],
     default: 'local'
+  },
+  mfaEnabled: {
+    type: Boolean,
+    default: false
+  },
+  mfaSecret: {
+    type: String,
+    select: false,
+    default: null
+  },
+  mfaTempSecret: {
+    type: String,
+    select: false,
+    default: null
   },
   isVerified: {
     type: Boolean,
@@ -59,7 +61,7 @@ userSchema.pre('save', async function(next) {
   // Only hash the password if it has been modified (or is new)
   if (!this.isModified('password')) return next();
   
-  // Only hash if password exists (for OAuth users it might not)
+  // Only hash if password exists
   if (this.password) {
     try {
       const salt = await bcrypt.genSalt(10);

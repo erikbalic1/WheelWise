@@ -1,15 +1,15 @@
 const express = require('express');
-const passport = require('passport');
 const {
   register,
   login,
   getMe,
-  oauthSuccess,
-  oauthFailure,
   logout,
   updateProfile,
   updatePassword,
-  updateAvatar
+  updateAvatar,
+  setupMfa,
+  enableMfa,
+  disableMfa
 } = require('../controllers/authController');
 const { protect } = require('../middlewares/auth');
 
@@ -28,33 +28,9 @@ router.put('/profile', protect, updateProfile);
 router.put('/password', protect, updatePassword);
 router.put('/avatar', protect, updateAvatar);
 
-// Google OAuth routes
-router.get('/google',
-  passport.authenticate('google', { scope: ['profile', 'email'] })
-);
-
-router.get('/google/callback',
-  passport.authenticate('google', {
-    failureRedirect: '/api/auth/failure',
-    session: false
-  }),
-  oauthSuccess
-);
-
-// Facebook OAuth routes
-router.get('/facebook',
-  passport.authenticate('facebook', { scope: ['email'] })
-);
-
-router.get('/facebook/callback',
-  passport.authenticate('facebook', {
-    failureRedirect: '/api/auth/failure',
-    session: false
-  }),
-  oauthSuccess
-);
-
-// OAuth failure route
-router.get('/failure', oauthFailure);
+// MFA routes (protected)
+router.post('/mfa/setup', protect, setupMfa);
+router.post('/mfa/enable', protect, enableMfa);
+router.post('/mfa/disable', protect, disableMfa);
 
 module.exports = router;

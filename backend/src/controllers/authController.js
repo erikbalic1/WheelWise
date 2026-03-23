@@ -1,4 +1,6 @@
 const jwt = require('jsonwebtoken');
+const speakeasy = require('speakeasy');
+const qrcode = require('qrcode');
 const User = require('../models/User');
 
 // Generate JWT Token
@@ -7,6 +9,17 @@ const generateToken = (userId) => {
     expiresIn: process.env.JWT_EXPIRE || '7d'
   });
 };
+
+const sanitizeUser = (user) => ({
+  id: user._id,
+  email: user.email,
+  name: user.name,
+  avatar: user.avatar,
+  provider: user.provider,
+  isVerified: user.isVerified,
+  mfaEnabled: user.mfaEnabled,
+  createdAt: user.createdAt
+});
 
 // Register new user
 exports.register = async (req, res) => {
@@ -45,13 +58,7 @@ exports.register = async (req, res) => {
       success: true,
       message: 'User registered successfully',
       token,
-      user: {
-        id: user._id,
-        email: user.email,
-        name: user.name,
-        avatar: user.avatar,
-        provider: user.provider
-      }
+      user: sanitizeUser(user)
     });
   } catch (error) {
     console.error('Register error:', error);
@@ -66,7 +73,7 @@ exports.register = async (req, res) => {
 // Login user
 exports.login = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, mfaCode } = req.body;
 
     // Validation
     if (!email || !password) {
@@ -77,7 +84,7 @@ exports.login = async (req, res) => {
     }
 
     // Check if user exists
-    const user = await User.findOne({ email }).select('+password');
+    const user = await User.findOne({ email }).select('+password +mfaSecret');
     if (!user) {
       return res.status(401).json({
         success: false,
@@ -85,11 +92,11 @@ exports.login = async (req, res) => {
       });
     }
 
-    // Check if user registered with OAuth
+    // Defensive check if stored user has no password
     if (!user.password) {
       return res.status(401).json({
         success: false,
-        message: `This account was created using ${user.provider}. Please login with ${user.provider}.`
+        message: 'Invalid credentials'
       });
     }
 
@@ -102,6 +109,33 @@ exports.login = async (req, res) => {
       });
     }
 
+    // Enforce MFA when enabled
+    if (user.mfaEnabled) {
+      if (!mfaCode) {
+        return res.status(401).json({
+          success: false,
+          mfaRequired: true,
+          message: 'MFA code is required'
+        });
+      }
+
+      const normalizedCode = String(mfaCode).replace(/\s+/g, '');
+      const isMfaCodeValid = speakeasy.totp.verify({
+        secret: user.mfaSecret,
+        encoding: 'base32',
+        token: normalizedCode,
+        window: 1
+      });
+
+      if (!isMfaCodeValid) {
+        return res.status(401).json({
+          success: false,
+          mfaRequired: true,
+          message: 'Invalid MFA code'
+        });
+      }
+    }
+
     // Generate token
     const token = generateToken(user._id);
 
@@ -109,13 +143,7 @@ exports.login = async (req, res) => {
       success: true,
       message: 'Login successful',
       token,
-      user: {
-        id: user._id,
-        email: user.email,
-        name: user.name,
-        avatar: user.avatar,
-        provider: user.provider
-      }
+      user: sanitizeUser(user)
     });
   } catch (error) {
     console.error('Login error:', error);
@@ -141,15 +169,7 @@ exports.getMe = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      user: {
-        id: user._id,
-        email: user.email,
-        name: user.name,
-        avatar: user.avatar,
-        provider: user.provider,
-        isVerified: user.isVerified,
-        createdAt: user.createdAt
-      }
+      user: sanitizeUser(user)
     });
   } catch (error) {
     console.error('Get user error:', error);
@@ -161,42 +181,11 @@ exports.getMe = async (req, res) => {
   }
 };
 
-// OAuth Success Handler
-exports.oauthSuccess = async (req, res) => {
-  try {
-    if (!req.user) {
-      return res.redirect(`${process.env.FRONTEND_URL}/auth?error=authentication_failed`);
-    }
-
-    // Generate token
-    const token = generateToken(req.user._id);
-
-    // Redirect to frontend with token
-    res.redirect(`${process.env.FRONTEND_URL}/auth/callback?token=${token}`);
-  } catch (error) {
-    console.error('OAuth success error:', error);
-    res.redirect(`${process.env.FRONTEND_URL}/auth?error=authentication_failed`);
-  }
-};
-
-// OAuth Failure Handler
-exports.oauthFailure = (req, res) => {
-  res.redirect(`${process.env.FRONTEND_URL}/auth?error=authentication_failed`);
-};
-
 // Logout
 exports.logout = (req, res) => {
-  req.logout((err) => {
-    if (err) {
-      return res.status(500).json({
-        success: false,
-        message: 'Error logging out'
-      });
-    }
-    res.status(200).json({
-      success: true,
-      message: 'Logged out successfully'
-    });
+  res.status(200).json({
+    success: true,
+    message: 'Logged out successfully'
   });
 };
 
@@ -238,15 +227,7 @@ exports.updateProfile = async (req, res) => {
     res.status(200).json({
       success: true,
       message: 'Profile updated successfully',
-      user: {
-        id: user._id,
-        email: user.email,
-        name: user.name,
-        avatar: user.avatar,
-        provider: user.provider,
-        isVerified: user.isVerified,
-        createdAt: user.createdAt
-      }
+      user: sanitizeUser(user)
     });
   } catch (error) {
     console.error('Update profile error:', error);
@@ -278,14 +259,6 @@ exports.updatePassword = async (req, res) => {
       return res.status(404).json({
         success: false,
         message: 'User not found'
-      });
-    }
-
-    // Check if user has a password (not OAuth user)
-    if (!user.password) {
-      return res.status(400).json({
-        success: false,
-        message: 'Cannot change password for OAuth accounts'
       });
     }
 
@@ -353,21 +326,179 @@ exports.updateAvatar = async (req, res) => {
     res.status(200).json({
       success: true,
       message: 'Avatar updated successfully',
-      user: {
-        id: user._id,
-        email: user.email,
-        name: user.name,
-        avatar: user.avatar,
-        provider: user.provider,
-        isVerified: user.isVerified,
-        createdAt: user.createdAt
-      }
+      user: sanitizeUser(user)
     });
   } catch (error) {
     console.error('Update avatar error:', error);
     res.status(500).json({
       success: false,
       message: 'Server error during avatar update',
+      error: error.message
+    });
+  }
+};
+
+// Generate MFA setup QR (for logged-in users)
+exports.setupMfa = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select('+mfaTempSecret');
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+
+    const secret = speakeasy.generateSecret({
+      name: `WheelWise (${user.email})`,
+      issuer: 'WheelWise',
+      length: 20
+    });
+
+    const qrCodeDataUrl = await qrcode.toDataURL(secret.otpauth_url);
+
+    user.mfaTempSecret = secret.base32;
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: 'MFA setup initialized',
+      mfaEnabled: user.mfaEnabled,
+      qrCode: qrCodeDataUrl,
+      manualEntryKey: secret.base32
+    });
+  } catch (error) {
+    console.error('Setup MFA error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error during MFA setup',
+      error: error.message
+    });
+  }
+};
+
+// Verify TOTP code and enable MFA
+exports.enableMfa = async (req, res) => {
+  try {
+    const { code } = req.body;
+
+    if (!code) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide MFA code'
+      });
+    }
+
+    const user = await User.findById(req.user.id).select('+mfaTempSecret +mfaSecret');
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+
+    if (!user.mfaTempSecret) {
+      return res.status(400).json({
+        success: false,
+        message: 'MFA setup is not initialized'
+      });
+    }
+
+    const normalizedCode = String(code).replace(/\s+/g, '');
+    const isCodeValid = speakeasy.totp.verify({
+      secret: user.mfaTempSecret,
+      encoding: 'base32',
+      token: normalizedCode,
+      window: 1
+    });
+
+    if (!isCodeValid) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid MFA code'
+      });
+    }
+
+    user.mfaSecret = user.mfaTempSecret;
+    user.mfaTempSecret = null;
+    user.mfaEnabled = true;
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: 'MFA enabled successfully',
+      user: sanitizeUser(user)
+    });
+  } catch (error) {
+    console.error('Enable MFA error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error while enabling MFA',
+      error: error.message
+    });
+  }
+};
+
+// Disable MFA (requires current MFA code)
+exports.disableMfa = async (req, res) => {
+  try {
+    const { code } = req.body;
+
+    if (!code) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide MFA code'
+      });
+    }
+
+    const user = await User.findById(req.user.id).select('+mfaSecret +mfaTempSecret');
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+
+    if (!user.mfaEnabled || !user.mfaSecret) {
+      return res.status(400).json({
+        success: false,
+        message: 'MFA is not enabled'
+      });
+    }
+
+    const normalizedCode = String(code).replace(/\s+/g, '');
+    const isCodeValid = speakeasy.totp.verify({
+      secret: user.mfaSecret,
+      encoding: 'base32',
+      token: normalizedCode,
+      window: 1
+    });
+
+    if (!isCodeValid) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid MFA code'
+      });
+    }
+
+    user.mfaEnabled = false;
+    user.mfaSecret = null;
+    user.mfaTempSecret = null;
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: 'MFA disabled successfully',
+      user: sanitizeUser(user)
+    });
+  } catch (error) {
+    console.error('Disable MFA error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error while disabling MFA',
       error: error.message
     });
   }
