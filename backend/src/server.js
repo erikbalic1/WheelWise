@@ -21,9 +21,6 @@ app.use(express.urlencoded({ extended: true }));
 // Serve static files (uploaded images)
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
-// Connect to database
-connectDB();
-
 // Basic route
 app.get('/', (req, res) => {
   res.json({ message: 'Welcome to WheelWise API' });
@@ -35,10 +32,16 @@ app.use('/api/ai', require('./routes/aiRoutes'));
 app.use('/api', require('./routes/carRoutes'));
 // app.use('/api/users', require('./routes/userRoutes'));
 
-// Start server
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+const startServer = async () => {
+  await connectDB();
+  const PORT = process.env.PORT || 5000;
+  app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+  });
+};
+
+if (require.main === module) {
+  startServer();
+}
 
 module.exports = app;
