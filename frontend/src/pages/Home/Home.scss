@@ -68,13 +68,13 @@
         cursor: pointer;
 
         &.btn-primary {
-          background-color: var(--accent-color);
-          color: #2c3e50;
+          background-color: var(--primary-color);
+          color: #ffffff;
 
           &:hover {
-            background-color: #f5d89e;
+            background-color: var(--primary-color-dark);
             transform: translateY(-2px);
-            box-shadow: 0 8px 16px rgba(255, 226, 175, 0.3);
+            box-shadow: var(--shadow-md);
           }
         }
 

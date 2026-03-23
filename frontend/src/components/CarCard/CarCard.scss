@@ -13,7 +13,7 @@
 
   &:hover {
     transform: translateY(-4px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    box-shadow: var(--shadow-md);
     border-color: var(--primary-color);
   }
 
@@ -154,10 +154,10 @@
       margin-top: auto;
 
       &:hover {
-        background: var(--accent-color);
-        color: #2c3e50;
+        background: var(--primary-color-dark);
+        color: #ffffff;
         transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(255, 226, 175, 0.4);
+        box-shadow: var(--shadow-sm);
       }
 
       &:active {

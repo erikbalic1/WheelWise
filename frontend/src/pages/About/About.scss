@@ -131,7 +131,7 @@
 
       .content-image {
         .image-placeholder {
-          background: linear-gradient(135deg, var(--accent-color), #f5d89e);
+          background: linear-gradient(135deg, var(--primary-color), var(--primary-color-dark));
           border-radius: $border-radius-lg;
           height: 300px;
           display: flex;
@@ -140,7 +140,7 @@
           box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
 
           svg {
-            color: #2c3e50;
+            color: #ffffff;
             width: 100px;
             height: 100px;
           }
@@ -178,7 +178,7 @@
         .value-icon {
           width: 80px;
           height: 80px;
-          background: linear-gradient(135deg, var(--accent-color), #f5d89e);
+          background: linear-gradient(135deg, var(--primary-color), var(--primary-color-dark));
           border-radius: 50%;
           display: flex;
           align-items: center;
@@ -186,7 +186,7 @@
           margin: 0 auto 1.5rem;
 
           svg {
-            color: #2c3e50;
+            color: #ffffff;
           }
         }
 
@@ -292,7 +292,7 @@
         .team-avatar {
           width: 120px;
           height: 120px;
-          background: linear-gradient(135deg, var(--accent-color), #f5d89e);
+          background: linear-gradient(135deg, var(--primary-color), var(--primary-color-dark));
           border-radius: 50%;
           display: flex;
           align-items: center;
@@ -302,7 +302,7 @@
           box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 
           svg {
-            color: #2c3e50;
+            color: #ffffff;
           }
         }
 
@@ -366,13 +366,13 @@
           cursor: pointer;
 
           &.btn-primary {
-            background-color: var(--accent-color);
-            color: #2c3e50;
+            background-color: var(--primary-color);
+            color: #ffffff;
 
             &:hover {
-              background-color: #f5d89e;
+              background-color: var(--primary-color-dark);
               transform: translateY(-2px);
-              box-shadow: 0 8px 16px rgba(255, 226, 175, 0.3);
+              box-shadow: var(--shadow-md);
             }
           }
 

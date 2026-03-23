@@ -95,7 +95,7 @@
       .info-icon {
         width: 48px;
         height: 48px;
-        background: linear-gradient(135deg, var(--accent-color), #f5d89e);
+        background: linear-gradient(135deg, var(--primary-color), var(--primary-color-dark));
         border-radius: 50%;
         display: flex;
         align-items: center;
@@ -103,7 +103,7 @@
         margin-bottom: 1rem;
 
         svg {
-          color: #2c3e50;
+          color: #ffffff;
         }
       }
 
@@ -124,8 +124,9 @@
 
   .contact-form-container {
     background: var(--background-white);
+    border: 1px solid var(--border-color);
     border-radius: $border-radius-lg;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--shadow-md);
     padding: 3rem 2.5rem;
 
     @media (max-width: $tablet-max) {
@@ -175,7 +176,7 @@
         width: 100%;
         padding: 0.875rem 1rem;
         font-size: 1rem;
-        border: 2px solid #e0e0e0;
+        border: 1px solid var(--border-color);
         border-radius: $border-radius-md;
         background-color: var(--background-white);
         color: var(--text-primary);
@@ -183,13 +184,13 @@
         font-family: $font-family;
 
         &::placeholder {
-          color: #bdc3c7;
+          color: var(--text-secondary);
         }
 
         &:focus {
           outline: none;
-          border-color: var(--accent-color);
-          box-shadow: 0 0 0 3px rgba(255, 226, 175, 0.2);
+          border-color: var(--primary-color);
+          box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
         }
 
         &.error {
@@ -224,13 +225,13 @@
       border: none;
       cursor: pointer;
       transition: all 0.3s ease;
-      background-color: var(--accent-color);
-      color: #2c3e50;
+      background-color: var(--primary-color);
+      color: #ffffff;
 
       &:hover {
-        background-color: #f5d89e;
+        background-color: var(--primary-color-dark);
         transform: translateY(-2px);
-        box-shadow: 0 8px 16px rgba(255, 226, 175, 0.3);
+        box-shadow: var(--shadow-md);
       }
 
       &:active {

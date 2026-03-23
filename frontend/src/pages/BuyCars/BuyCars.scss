@@ -91,8 +91,8 @@
       white-space: nowrap;
 
       &:hover {
-        border-color: $secondary-color;
-        background: $secondary-color;
+        border-color: var(--primary-color);
+        background: var(--primary-color);
         color: white;
       }
     }
@@ -122,6 +122,7 @@
     border-radius: 16px;
     padding: $spacing-lg;
     margin-bottom: $spacing-lg;
+    box-shadow: var(--shadow-sm);
     animation: slideDown 0.3s ease;
 
     .filters-grid {
@@ -261,12 +262,13 @@
   .error-message {
     text-align: center;
     padding: $spacing-xl * 2;
-    background: #fee;
+    background: rgba(239, 68, 68, 0.08);
+    border: 1px solid rgba(239, 68, 68, 0.3);
     border-radius: 8px;
     margin: $spacing-xl 0;
 
     p {
-      color: #c00;
+      color: var(--danger-color);
       font-size: 1.1rem;
       margin-bottom: $spacing-md;
     }
@@ -281,7 +283,7 @@
       font-weight: 600;
 
       &:hover {
-        background: $secondary-color;
+        background: var(--primary-color-dark);
       }
     }
   }
@@ -305,9 +307,9 @@
       transition: all 0.3s ease;
 
       &:hover:not(:disabled) {
-        background: $secondary-color;
+        background: var(--primary-color);
         color: white;
-        border-color: $secondary-color;
+        border-color: var(--primary-color);
       }
 
       &:disabled {

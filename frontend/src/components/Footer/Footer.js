@@ -119,7 +119,7 @@ const Footer = () => {
 
       <div className="footer-bottom">
         <p>{t.copyright}</p>
-        <a href="https://github.com/yourusername/wheelwise" target="_blank" rel="noopener noreferrer">
+        <a href="https://github.com/erikbalic1/wheelwise" target="_blank" rel="noopener noreferrer">
           {t.sourceCode}
         </a>
       </div>

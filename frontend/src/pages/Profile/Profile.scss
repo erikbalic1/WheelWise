@@ -91,8 +91,8 @@
         .user-badge {
           display: inline-block;
           padding: 0.35rem 1rem;
-          background: var(--accent-color);
-          color: #2c3e50;
+          background: var(--primary-color-light);
+          color: var(--primary-color);
           border-radius: 20px;
           font-size: 0.875rem;
           text-transform: capitalize;
@@ -235,8 +235,8 @@
       }
 
       .btn-primary {
-        background-color: var(--accent-color);
-        color: #2c3e50;
+        background-color: var(--primary-color);
+        color: #ffffff;
         padding: 0.875rem 2rem;
         border: none;
         border-radius: $border-radius-md;
@@ -246,9 +246,9 @@
         transition: all 0.3s ease;
 
         &:hover:not(:disabled) {
-          background-color: #f5d89e;
+          background-color: var(--primary-color-dark);
           transform: translateY(-2px);
-          box-shadow: 0 4px 12px rgba(255, 226, 175, 0.3);
+          box-shadow: var(--shadow-sm);
         }
 
         &:active:not(:disabled) {
