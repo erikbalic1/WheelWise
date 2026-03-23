@@ -13,13 +13,11 @@ const Auth = () => {
     name: '',
     email: '',
     password: '',
-    confirmPassword: '',
-    mfaCode: ''
+    confirmPassword: ''
   });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [apiError, setApiError] = useState('');
-  const [mfaRequired, setMfaRequired] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -59,15 +57,6 @@ const Auth = () => {
       newErrors.confirmPassword = translations.auth?.passwordMatch || 'Passwords do not match';
     }
 
-    if (isLogin && mfaRequired) {
-      const mfaCode = formData.mfaCode?.trim() || '';
-      if (!mfaCode) {
-        newErrors.mfaCode = 'MFA code is required';
-      } else if (!/^\d{6}$/.test(mfaCode)) {
-        newErrors.mfaCode = 'MFA code must be 6 digits';
-      }
-    }
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -81,17 +70,20 @@ const Auth = () => {
       try {
         let result;
         if (isLogin) {
-          result = await login(formData.email, formData.password, formData.mfaCode || '');
+          result = await login(formData.email, formData.password);
         } else {
           result = await register(formData.name, formData.email, formData.password);
         }
 
         if (result.success) {
-          setMfaRequired(false);
           navigate('/');
         } else if (result.mfaRequired) {
-          setMfaRequired(true);
-          setApiError(result.message || 'Enter the code from Google Authenticator.');
+          navigate('/auth/mfa', {
+            state: {
+              email: formData.email,
+              password: formData.password
+            }
+          });
         } else {
           setApiError(result.message);
         }
@@ -109,12 +101,10 @@ const Auth = () => {
       name: '',
       email: '',
       password: '',
-      confirmPassword: '',
-      mfaCode: ''
+      confirmPassword: ''
     });
     setErrors({});
     setApiError('');
-    setMfaRequired(false);
   };
 
   return (
@@ -179,24 +169,6 @@ const Auth = () => {
             />
             {errors.password && <span className="error-message">{errors.password}</span>}
           </div>
-
-          {isLogin && mfaRequired && (
-            <div className="form-group">
-              <label htmlFor="mfaCode">Google Authenticator Code</label>
-              <input
-                type="text"
-                id="mfaCode"
-                name="mfaCode"
-                value={formData.mfaCode || ''}
-                onChange={handleInputChange}
-                placeholder="Enter 6-digit code"
-                className={errors.mfaCode ? 'error' : ''}
-                maxLength="6"
-                inputMode="numeric"
-              />
-              {errors.mfaCode && <span className="error-message">{errors.mfaCode}</span>}
-            </div>
-          )}
 
           {!isLogin && (
             <div className="form-group">
