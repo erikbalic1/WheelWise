@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useLanguage } from '../../context/LanguageContext';
+import api from '../../services/api';
 import './AskAI.scss';
 
 const AskAI = () => {
@@ -73,17 +74,36 @@ const AskAI = () => {
     setInputValue('');
     setIsLoading(true);
 
-    // Simulate AI response (replace with actual API call later)
-    setTimeout(() => {
+    try {
+      const response = await api.post('/ai/recommend', {
+        preferences: userMessage.content
+      });
+
+      const data = response.data;
+      const recommendationLines = (data.recommendations || [])
+        .map((item, index) => `${index + 1}. ${item.model} — ${item.reason}`)
+        .join('\n');
+
+      const noteLine = data.note ? `\n\nNote: ${data.note}` : '';
       const aiMessage = {
         id: Date.now() + 1,
         type: 'ai',
-        content: translations.askAI?.sampleResponse || "I'm here to help you with car-related questions! This is a placeholder response. In the future, I'll be powered by AI to provide detailed answers about car buying, maintenance, comparisons, and more.",
+        content: `${data.summary}\n\n${recommendationLines}${noteLine}`,
+        timestamp: new Date()
+      };
+
+      setMessages(prev => [...prev, aiMessage]);
+    } catch (error) {
+      const aiMessage = {
+        id: Date.now() + 1,
+        type: 'ai',
+        content: error.response?.data?.message || 'I could not generate recommendations right now. Please try again.',
         timestamp: new Date()
       };
       setMessages(prev => [...prev, aiMessage]);
+    } finally {
       setIsLoading(false);
-    }, 1500);
+    }
   };
 
   const handleSuggestedQuestion = (question) => {

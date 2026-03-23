@@ -106,6 +106,20 @@ WheelWise/
 - Multiple currency support
 - Responsive design for mobile and desktop
 
+## AI Car Advisor (Groq + Llama)
+
+WheelWise uses a prebuilt hosted Llama model via Groq for car recommendations based on user preferences.
+
+1. Create a Groq account: https://console.groq.com/
+2. Generate an API key in the Groq dashboard
+3. In `backend/.env`, set:
+   ```bash
+   GROQ_API_KEY=your_groq_api_key_here
+   GROQ_MODEL=llama-3.1-8b-instant
+   ```
+
+The Ask AI page calls `POST /api/ai/recommend` and returns recommended car models with reasons.
+
 ## Development Roadmap
 
 - [x] Project structure initialization
