@@ -1,140 +1,190 @@
-# WheelWise - Car Selling Platform
+# WheelWise
 
-Browse cars, view detailed specs, and sell your own by creating a profile. Get AI tips on the best car for you, and enjoy a seamless experience with multi-language support, light and dark themes, and multiple currencies—all in one smart car marketplace.
+WheelWise is a full-stack car marketplace application where users can browse and filter listings, view detailed car pages, create new listings, manage profile settings, and use an AI advisor to get model recommendations.
 
-## Technology Stack
+## Core Features
+
+- Local authentication with JWT
+- MFA support (TOTP / Google Authenticator)
+- Profile management (name/email/avatar/password)
+- Car listing CRUD with image uploads
+- Car browsing with filters, search, and pagination
+- Car details page with image gallery and specs
+- AI car advisor using Groq-hosted Llama models
+- Multi-language frontend (EN/HU/DE)
+- Light/dark theme support
+- Full frontend + backend automated test architecture
+
+## Tech Stack
 
 ### Frontend
-- React.js
-- SCSS for styling
-- React Router for navigation
-- Axios for API calls
+
+- React
+- React Router
+- SCSS
+- Axios
+- React Testing Library + Jest (CRA test runner)
 
 ### Backend
-- Node.js
-- Express.js
-- MongoDB with Mongoose
-- JWT for authentication
 
-## Project Structure
+- Node.js
+- Express
+- MongoDB + Mongoose
+- JWT (`jsonwebtoken`)
+- Password hashing (`bcryptjs`)
+- TOTP MFA (`speakeasy` + `qrcode`)
+- Tests: Jest + Supertest
+
+## Repository Structure
 
 ```
 WheelWise/
-├── frontend/          # React frontend application
-│   ├── src/
-│   │   ├── assets/
-│   │   ├── components/
-│   │   ├── pages/
-│   │   ├── services/
-│   │   ├── styles/
-│   │   └── utils/
-│   └── package.json
-│
-├── backend/           # Node.js backend API
+├── backend/
 │   ├── src/
 │   │   ├── config/
 │   │   ├── controllers/
+│   │   ├── middlewares/
 │   │   ├── models/
 │   │   ├── routes/
-│   │   └── middlewares/
+│   │   └── server.js
+│   ├── tests/
+│   ├── .env.example
 │   └── package.json
-│
+├── frontend/
+│   ├── src/
+│   │   ├── assets/
+│   │   ├── components/
+│   │   ├── context/
+│   │   ├── pages/
+│   │   ├── services/
+│   │   ├── styles/
+│   │   └── tests/
+│   └── package.json
 └── README.md
 ```
 
-## Setup Instructions
+## Prerequisites
 
-### Prerequisites
-- Node.js (v14 or higher)
-- MongoDB (local or Atlas)
-- npm or yarn
+- Node.js 18+
+- npm 9+
+- MongoDB instance (local or cloud)
+- Groq API key (for AI advisor)
 
-### Backend Setup
-1. Navigate to the backend directory:
-   ```bash
-   cd backend
-   ```
+## Environment Variables
 
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
+Create `backend/.env` from `backend/.env.example` and set:
 
-3. Create `.env` file:
-   ```bash
-   cp .env.example .env
-   ```
+```dotenv
+PORT=5000
+NODE_ENV=development
+MONGODB_URI=your_mongodb_connection_string
+JWT_SECRET=your_super_secret_jwt_key
+JWT_EXPIRE=7d
+FRONTEND_URL=http://localhost:3000
 
-4. Configure your environment variables in `.env`
+# AI Advisor
+GROQ_API_KEY=your_groq_api_key
+GROQ_MODEL=llama-3.1-8b-instant
+```
 
-5. Start the development server:
-   ```bash
-   npm run dev
-   ```
+Optional frontend env file (`frontend/.env`):
 
-### Frontend Setup
-1. Navigate to the frontend directory:
-   ```bash
-   cd frontend
-   ```
+```dotenv
+REACT_APP_API_URL=http://localhost:5000/api
+```
 
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
+## Local Development
 
-3. Create `.env` file:
-   ```bash
-   cp .env.example .env
-   ```
+### 1) Install dependencies
 
-4. Start the development server:
-   ```bash
-   npm start
-   ```
+```bash
+cd backend
+npm install
 
-## Features (Planned)
+cd ../frontend
+npm install
+```
 
-- User authentication and authorization
-- Car listing management (CRUD operations)
-- Advanced search and filtering
-- Image upload for car listings
-- User profiles and dashboards
-- AI-powered car recommendations
-- Multi-language support
-- Light and dark themes
-- Multiple currency support
-- Responsive design for mobile and desktop
+### 2) Run backend
 
-## AI Car Advisor (Groq + Llama)
+```bash
+cd backend
+npm run dev
+```
 
-WheelWise uses a prebuilt hosted Llama model via Groq for car recommendations based on user preferences.
+### 3) Run frontend
 
-1. Create a Groq account: https://console.groq.com/
-2. Generate an API key in the Groq dashboard
-3. In `backend/.env`, set:
-   ```bash
-   GROQ_API_KEY=your_groq_api_key_here
-   GROQ_MODEL=llama-3.1-8b-instant
-   ```
+```bash
+cd frontend
+npm start
+```
 
-The Ask AI page calls `POST /api/ai/recommend` and returns recommended car models with reasons.
+Frontend runs on `http://localhost:3000`, backend on `http://localhost:5000` by default.
 
-## Development Roadmap
+## Scripts
 
-- [x] Project structure initialization
-- [ ] Database models implementation
-- [ ] Authentication system
-- [ ] Car listing features
-- [ ] Search and filter functionality
-- [ ] User interface components
-- [ ] Image upload system
-- [ ] AI recommendation system
-- [ ] Multi-language support
-- [ ] Theme system
-- [ ] Currency conversion
-- [ ] Testing and deployment
+### Backend
 
-## License
+- `npm run dev` – start with nodemon
+- `npm start` – start production-like server
+- `npm test` – run backend Jest tests
 
-This project is private and proprietary.
+### Frontend
+
+- `npm start` – start React dev server
+- `npm run build` – production build
+- `npm test` – run frontend tests
+
+## API Overview
+
+### Auth (`/api/auth`)
+
+- `POST /register`
+- `POST /login`
+- `POST /logout`
+- `GET /me` (protected)
+- `PUT /profile` (protected)
+- `PUT /password` (protected)
+- `PUT /avatar` (protected)
+- `POST /mfa/setup` (protected)
+- `POST /mfa/enable` (protected)
+- `POST /mfa/disable` (protected)
+
+### Cars (`/api`)
+
+- `GET /cars`
+- `GET /cars/:id`
+- `GET /filter-options`
+- `POST /cars` (protected, multipart)
+- `PUT /cars/:id` (protected, multipart)
+- `DELETE /cars/:id` (protected)
+- `GET /my-cars` (protected)
+
+### AI (`/api/ai`)
+
+- `POST /recommend`
+  - Uses Groq-hosted Llama model
+  - Returns recommendation summary + car model suggestions
+  - Includes fallback logic if provider fails
+
+## Test Architecture
+
+### Backend tests (`backend/tests`)
+
+- `aiRoutes.test.js`
+- `authRoutes.test.js`
+- `carRoutes.test.js`
+
+### Frontend tests (`frontend/src`)
+
+- `pages/AskAI/AskAI.test.js`
+- `tests/pages/pages.smoke.test.js`
+- `tests/context/themeContext.test.js`
+- `tests/services/api.test.js`
+- `tests/utils/renderWithProviders.js`
+
+## Notes
+
+- Uploaded images are stored under `backend/uploads`.
+- This project currently uses local file uploads and JWT stored client-side.
+- The project is private/proprietary.
