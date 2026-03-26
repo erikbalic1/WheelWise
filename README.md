@@ -69,6 +69,7 @@ WheelWise/
 - npm 9+
 - MongoDB instance (local or cloud)
 - Groq API key (for AI advisor)
+- Docker Desktop (optional, recommended for containerized run)
 
 ## Environment Variables
 
@@ -120,6 +121,50 @@ npm start
 ```
 
 Frontend runs on `http://localhost:3000`, backend on `http://localhost:5000` by default.
+
+## Run With Docker Desktop
+
+This project includes a complete Docker setup for frontend, backend, and MongoDB.
+
+### 1) Create root env for Docker compose
+
+From project root, create `.env` from `.env.example` and optionally set your Groq values:
+
+```dotenv
+GROQ_API_KEY=your_groq_api_key
+GROQ_MODEL=llama-3.1-8b-instant
+```
+
+If `GROQ_API_KEY` is empty, the AI endpoint may return provider errors.
+
+### 2) Build and start all containers
+
+```bash
+docker compose up --build
+```
+
+### 3) Open the app
+
+- Frontend: `http://localhost:3000`
+- Backend health/basic route: `http://localhost:5000`
+
+### 4) Stop containers
+
+```bash
+docker compose down
+```
+
+To also remove the MongoDB volume:
+
+```bash
+docker compose down -v
+```
+
+### Notes about container networking
+
+- Frontend is served by Nginx in Docker and proxies `/api` and `/uploads` to backend.
+- Backend connects to MongoDB using Docker network hostname `mongo`.
+- Uploaded images are persisted in `backend/uploads` via a bind mount.
 
 ## Scripts
 
