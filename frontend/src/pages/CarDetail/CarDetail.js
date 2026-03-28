@@ -13,7 +13,8 @@ const CarDetail = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+  const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+  const FALLBACK_IMAGE = 'data:image/svg+xml;charset=UTF-8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22800%22 height=%22600%22 viewBox=%220 0 800 600%22%3E%3Crect width=%22800%22 height=%22600%22 fill=%22%23ececec%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22 fill=%22%23777777%22 font-family=%22Arial%22 font-size=%2232%22%3ENo image available%3C/text%3E%3C/svg%3E';
 
   useEffect(() => {
     const fetchCar = async () => {
@@ -34,11 +35,27 @@ const CarDetail = () => {
     fetchCar();
   }, [id]);
 
+  const getBackendBaseUrl = () => {
+    const normalized = API_URL.replace(/\/$/, '');
+    return normalized.endsWith('/api') ? normalized.slice(0, -4) : normalized;
+  };
+
   const getImageUrl = (imagePath) => {
-    if (imagePath.startsWith('http')) {
+    if (!imagePath || typeof imagePath !== 'string') {
+      return FALLBACK_IMAGE;
+    }
+
+    if (/^(https?:\/\/|data:)/i.test(imagePath)) {
       return imagePath;
     }
-    return `${API_URL}${imagePath}`;
+
+    const cleanPath = imagePath.startsWith('/') ? imagePath : `/${imagePath}`;
+    return `${getBackendBaseUrl()}${cleanPath}`;
+  };
+
+  const handleImageError = (e) => {
+    e.currentTarget.onerror = null;
+    e.currentTarget.src = FALLBACK_IMAGE;
   };
 
   if (loading) {
@@ -69,15 +86,17 @@ const CarDetail = () => {
     );
   }
 
+  const images = Array.isArray(car.images) ? car.images : [];
+
   const nextImage = () => {
     setCurrentImageIndex((prev) => 
-      prev === car.images.length - 1 ? 0 : prev + 1
+      prev === images.length - 1 ? 0 : prev + 1
     );
   };
 
   const prevImage = () => {
     setCurrentImageIndex((prev) => 
-      prev === 0 ? car.images.length - 1 : prev - 1
+      prev === 0 ? images.length - 1 : prev - 1
     );
   };
 
@@ -103,13 +122,11 @@ const CarDetail = () => {
           <div className="gallery-section">
             <div className="main-image">
               <img 
-                src={getImageUrl(car.images[currentImageIndex])} 
+                src={getImageUrl(images[currentImageIndex])} 
                 alt={`${car.brand} ${car.model}`}
-                onError={(e) => {
-                  e.target.src = 'https://via.placeholder.com/800x600?text=Car+Image';
-                }}
+                onError={handleImageError}
               />
-              {car.images.length > 1 && (
+              {images.length > 1 && (
                 <>
                   <button className="image-nav prev" onClick={prevImage}>‹</button>
                   <button className="image-nav next" onClick={nextImage}>›</button>
@@ -117,9 +134,9 @@ const CarDetail = () => {
               )}
             </div>
             
-            {car.images.length > 1 && (
+            {images.length > 1 && (
               <div className="thumbnail-gallery">
-                {car.images.map((image, index) => (
+                {images.map((image, index) => (
                   <div
                     key={index}
                     className={`thumbnail ${index === currentImageIndex ? 'active' : ''}`}
@@ -128,9 +145,7 @@ const CarDetail = () => {
                     <img 
                       src={getImageUrl(image)} 
                       alt={`${car.brand} ${car.model} - ${index + 1}`}
-                      onError={(e) => {
-                        e.target.src = 'https://via.placeholder.com/150?text=Car';
-                      }}
+                      onError={handleImageError}
                     />
                   </div>
                 ))}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useLanguage } from '../../context/LanguageContext';
@@ -13,6 +13,31 @@ const SellCars = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [imagePreviews, setImagePreviews] = useState([]);
+  const [myCars, setMyCars] = useState([]);
+  const [myCarsLoading, setMyCarsLoading] = useState(false);
+  const [myCarsError, setMyCarsError] = useState('');
+  const [editingCarId, setEditingCarId] = useState('');
+  const [editLoading, setEditLoading] = useState(false);
+  const [deleteLoadingId, setDeleteLoadingId] = useState('');
+  const [editFormData, setEditFormData] = useState({
+    brand: '',
+    model: '',
+    year: '',
+    price: '',
+    bodyType: 'Sedan',
+    color: '',
+    fuelType: 'Gas',
+    kilometers: '',
+    transmission: 'Automatic',
+    power: '',
+    location: '',
+    description: '',
+    features: '',
+    condition: 'Used',
+    sellerPhone: ''
+  });
+
+  const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
   
   const [formData, setFormData] = useState({
     brand: '',
@@ -32,6 +57,60 @@ const SellCars = () => {
     sellerPhone: '',
     images: []
   });
+
+  const getBackendBaseUrl = () => {
+    const normalized = API_URL.replace(/\/$/, '');
+    return normalized.endsWith('/api') ? normalized.slice(0, -4) : normalized;
+  };
+
+  const getImageUrl = (imagePath) => {
+    if (!imagePath || typeof imagePath !== 'string') {
+      return '';
+    }
+
+    if (/^https?:\/\//i.test(imagePath)) {
+      return imagePath;
+    }
+
+    const cleanPath = imagePath.startsWith('/') ? imagePath : `/${imagePath}`;
+    return `${getBackendBaseUrl()}${cleanPath}`;
+  };
+
+  const formatPrice = (price) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 0
+    }).format(price || 0);
+  };
+
+  const loadMyCars = useCallback(async () => {
+    if (!user) {
+      setMyCars([]);
+      setMyCarsError('');
+      return;
+    }
+
+    setMyCarsLoading(true);
+    setMyCarsError('');
+
+    try {
+      const response = await api.get('/my-cars');
+      if (response.data.success) {
+        setMyCars(response.data.data || []);
+      }
+    } catch (err) {
+      console.error('Error fetching your listings:', err);
+      setMyCarsError('Failed to load your listings.');
+      setMyCars([]);
+    } finally {
+      setMyCarsLoading(false);
+    }
+  }, [user]);
+
+  useEffect(() => {
+    loadMyCars();
+  }, [loadMyCars]);
 
   const brands = [
     'Audi', 'BMW', 'Mercedes', 'Volkswagen', 'Toyota', 'Honda', 'Ford', 
@@ -172,6 +251,7 @@ const SellCars = () => {
           images: []
         });
         setImagePreviews([]);
+        await loadMyCars();
         
         // Redirect to car detail page after 2 seconds
         setTimeout(() => {
@@ -183,6 +263,116 @@ const SellCars = () => {
       setError(err.response?.data?.message || translations.sellCar?.errorMessage || 'Failed to create listing. Please try again.');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const startEdit = (car) => {
+    setEditingCarId(car._id);
+    setEditFormData({
+      brand: car.brand || '',
+      model: car.model || '',
+      year: car.year || '',
+      price: car.price || '',
+      bodyType: car.bodyType || 'Sedan',
+      color: car.color || '',
+      fuelType: car.fuelType || 'Gas',
+      kilometers: car.kilometers || '',
+      transmission: car.transmission || 'Automatic',
+      power: car.power || '',
+      location: car.location || '',
+      description: car.description || '',
+      features: Array.isArray(car.features) ? car.features.join(', ') : '',
+      condition: car.condition || 'Used',
+      sellerPhone: car.sellerPhone || ''
+    });
+  };
+
+  const cancelEdit = () => {
+    setEditingCarId('');
+    setEditFormData({
+      brand: '',
+      model: '',
+      year: '',
+      price: '',
+      bodyType: 'Sedan',
+      color: '',
+      fuelType: 'Gas',
+      kilometers: '',
+      transmission: 'Automatic',
+      power: '',
+      location: '',
+      description: '',
+      features: '',
+      condition: 'Used',
+      sellerPhone: ''
+    });
+  };
+
+  const handleEditChange = (e) => {
+    const { name, value } = e.target;
+    setEditFormData((prev) => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleUpdateListing = async (id) => {
+    if (!id) return;
+
+    setEditLoading(true);
+    setError('');
+    setSuccess('');
+
+    const payload = {
+      ...editFormData,
+      year: Number(editFormData.year),
+      price: Number(editFormData.price),
+      kilometers: Number(editFormData.kilometers),
+      power: Number(editFormData.power),
+      features: editFormData.features
+        .split(',')
+        .map((feature) => feature.trim())
+        .filter((feature) => feature)
+    };
+
+    try {
+      const response = await api.put(`/cars/${id}`, payload);
+      if (response.data.success) {
+        setSuccess('Listing updated successfully.');
+        setEditingCarId('');
+        await loadMyCars();
+      }
+    } catch (err) {
+      console.error('Error updating listing:', err);
+      setError(err.response?.data?.message || 'Failed to update listing.');
+    } finally {
+      setEditLoading(false);
+    }
+  };
+
+  const handleDeleteListing = async (id) => {
+    if (!id || !window.confirm('Are you sure you want to delete this listing?')) {
+      return;
+    }
+
+    setDeleteLoadingId(id);
+    setError('');
+    setSuccess('');
+
+    try {
+      const response = await api.delete(`/cars/${id}`);
+      if (response.data.success) {
+        setSuccess('Listing deleted successfully.');
+        setMyCars((prev) => prev.filter((car) => car._id !== id));
+        if (editingCarId === id) {
+          cancelEdit();
+        }
+      }
+    } catch (err) {
+      console.error('Error deleting listing:', err);
+      setError(err.response?.data?.message || 'Failed to delete listing.');
+    } finally {
+      setDeleteLoadingId('');
     }
   };
 
@@ -520,6 +710,186 @@ const SellCars = () => {
             </button>
           </div>
         </form>
+
+        <section className="my-listings-section">
+          <div className="my-listings-header">
+            <h2>Your Published Listings</h2>
+            <button type="button" className="btn btn-secondary" onClick={loadMyCars} disabled={myCarsLoading}>
+              {myCarsLoading ? 'Refreshing...' : 'Refresh'}
+            </button>
+          </div>
+
+          {myCarsError && <div className="alert alert-error">{myCarsError}</div>}
+
+          {myCarsLoading ? (
+            <div className="my-listings-empty">Loading your listings...</div>
+          ) : myCars.length === 0 ? (
+            <div className="my-listings-empty">You have not published any car listings yet.</div>
+          ) : (
+            <div className="my-listings-grid">
+              {myCars.map((car) => {
+                const isEditing = editingCarId === car._id;
+                const coverImage = Array.isArray(car.images) && car.images.length > 0 ? getImageUrl(car.images[0]) : '';
+
+                return (
+                  <article key={car._id} className="listing-card">
+                    {!isEditing ? (
+                      <>
+                        <div className="listing-image-wrap">
+                          {coverImage ? (
+                            <img
+                              src={coverImage}
+                              alt={`${car.brand} ${car.model}`}
+                              className="listing-image"
+                            />
+                          ) : (
+                            <div className="listing-image-placeholder">No image</div>
+                          )}
+                        </div>
+                        <div className="listing-content">
+                          <h3>{car.brand} {car.model}</h3>
+                          <p className="listing-price">{formatPrice(car.price)}</p>
+                          <p className="listing-meta">{car.year} • {car.bodyType} • {car.kilometers?.toLocaleString()} km</p>
+                          <div className="listing-actions">
+                            <button type="button" className="btn btn-secondary" onClick={() => startEdit(car)}>
+                              Edit
+                            </button>
+                            <button
+                              type="button"
+                              className="btn btn-danger"
+                              onClick={() => handleDeleteListing(car._id)}
+                              disabled={deleteLoadingId === car._id}
+                            >
+                              {deleteLoadingId === car._id ? 'Deleting...' : 'Delete'}
+                            </button>
+                            <button type="button" className="btn btn-primary" onClick={() => navigate(`/car/${car._id}`)}>
+                              View
+                            </button>
+                          </div>
+                        </div>
+                      </>
+                    ) : (
+                      <div className="listing-edit-form">
+                        <div className="form-row">
+                          <div className="form-group">
+                            <label>Brand *</label>
+                            <input name="brand" value={editFormData.brand} onChange={handleEditChange} required />
+                          </div>
+                          <div className="form-group">
+                            <label>Model *</label>
+                            <input name="model" value={editFormData.model} onChange={handleEditChange} required />
+                          </div>
+                        </div>
+                        <div className="form-row">
+                          <div className="form-group">
+                            <label>Year *</label>
+                            <input type="number" name="year" value={editFormData.year} onChange={handleEditChange} required />
+                          </div>
+                          <div className="form-group">
+                            <label>Price *</label>
+                            <input type="number" name="price" value={editFormData.price} onChange={handleEditChange} required />
+                          </div>
+                        </div>
+                        <div className="form-row">
+                          <div className="form-group">
+                            <label>Kilometers *</label>
+                            <input type="number" name="kilometers" value={editFormData.kilometers} onChange={handleEditChange} required />
+                          </div>
+                          <div className="form-group">
+                            <label>Power *</label>
+                            <input type="number" name="power" value={editFormData.power} onChange={handleEditChange} required />
+                          </div>
+                        </div>
+                        <div className="form-row">
+                          <div className="form-group">
+                            <label>Body Type *</label>
+                            <select name="bodyType" value={editFormData.bodyType} onChange={handleEditChange}>
+                              {bodyTypes.map((type) => (
+                                <option key={type} value={type}>{type}</option>
+                              ))}
+                            </select>
+                          </div>
+                          <div className="form-group">
+                            <label>Fuel Type *</label>
+                            <select name="fuelType" value={editFormData.fuelType} onChange={handleEditChange}>
+                              {fuelTypes.map((type) => (
+                                <option key={type} value={type}>{type}</option>
+                              ))}
+                            </select>
+                          </div>
+                        </div>
+                        <div className="form-row">
+                          <div className="form-group">
+                            <label>Transmission *</label>
+                            <select name="transmission" value={editFormData.transmission} onChange={handleEditChange}>
+                              {transmissions.map((type) => (
+                                <option key={type} value={type}>{type}</option>
+                              ))}
+                            </select>
+                          </div>
+                          <div className="form-group">
+                            <label>Condition *</label>
+                            <select name="condition" value={editFormData.condition} onChange={handleEditChange}>
+                              {conditions.map((condition) => (
+                                <option key={condition} value={condition}>{condition}</option>
+                              ))}
+                            </select>
+                          </div>
+                        </div>
+                        <div className="form-row">
+                          <div className="form-group">
+                            <label>Color *</label>
+                            <select name="color" value={editFormData.color} onChange={handleEditChange}>
+                              {colors.map((color) => (
+                                <option key={color} value={color}>{color}</option>
+                              ))}
+                            </select>
+                          </div>
+                          <div className="form-group">
+                            <label>Phone *</label>
+                            <input name="sellerPhone" value={editFormData.sellerPhone} onChange={handleEditChange} required />
+                          </div>
+                        </div>
+                        <div className="form-group full-width">
+                          <label>Location *</label>
+                          <input name="location" value={editFormData.location} onChange={handleEditChange} required />
+                        </div>
+                        <div className="form-group full-width">
+                          <label>Description *</label>
+                          <textarea
+                            name="description"
+                            value={editFormData.description}
+                            onChange={handleEditChange}
+                            rows="4"
+                            maxLength="2000"
+                            required
+                          />
+                        </div>
+                        <div className="form-group full-width">
+                          <label>Features (comma-separated)</label>
+                          <input name="features" value={editFormData.features} onChange={handleEditChange} />
+                        </div>
+                        <div className="listing-actions">
+                          <button
+                            type="button"
+                            className="btn btn-primary"
+                            onClick={() => handleUpdateListing(car._id)}
+                            disabled={editLoading}
+                          >
+                            {editLoading ? 'Saving...' : 'Save Changes'}
+                          </button>
+                          <button type="button" className="btn btn-secondary" onClick={cancelEdit} disabled={editLoading}>
+                            Cancel
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </article>
+                );
+              })}
+            </div>
+          )}
+        </section>
       </div>
     </div>
   );

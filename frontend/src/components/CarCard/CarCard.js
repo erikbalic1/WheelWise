@@ -8,15 +8,34 @@ const CarCard = ({ car }) => {
   const { translations } = useLanguage();
   const navigate = useNavigate();
 
-  const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+  const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+  const FALLBACK_IMAGE = 'data:image/svg+xml;charset=UTF-8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22300%22 viewBox=%220 0 400 300%22%3E%3Crect width=%22400%22 height=%22300%22 fill=%22%23ececec%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22 fill=%22%23777777%22 font-family=%22Arial%22 font-size=%2222%22%3ENo image available%3C/text%3E%3C/svg%3E';
+
+  const getBackendBaseUrl = () => {
+    const normalized = API_URL.replace(/\/$/, '');
+    return normalized.endsWith('/api') ? normalized.slice(0, -4) : normalized;
+  };
 
   const getImageUrl = (imagePath) => {
+    if (!imagePath || typeof imagePath !== 'string') {
+      return FALLBACK_IMAGE;
+    }
+
     // If it's already a full URL, return as is
-    if (imagePath.startsWith('http')) {
+    if (/^https?:\/\//i.test(imagePath)) {
       return imagePath;
     }
+
+    // Build an absolute URL for local upload paths.
+    const cleanPath = imagePath.startsWith('/') ? imagePath : `/${imagePath}`;
     // Otherwise, prepend the API URL
-    return `${API_URL}${imagePath}`;
+    return `${getBackendBaseUrl()}${cleanPath}`;
+  };
+
+  const handleImageError = (e) => {
+    // Prevent recursive onError loops if fallback cannot be loaded.
+    e.currentTarget.onerror = null;
+    e.currentTarget.src = FALLBACK_IMAGE;
   };
 
   const nextImage = (e) => {
@@ -51,9 +70,7 @@ const CarCard = ({ car }) => {
         <img 
           src={getImageUrl(car.images[currentImageIndex])} 
           alt={`${car.brand} ${car.model}`}
-          onError={(e) => {
-            e.target.src = 'https://via.placeholder.com/400x300?text=Car+Image';
-          }}
+          onError={handleImageError}
         />
         {car.images.length > 1 && (
           <>

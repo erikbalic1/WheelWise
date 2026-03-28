@@ -302,6 +302,124 @@
     }
   }
 
+  .my-listings-section {
+    margin-top: $spacing-xl;
+    background: var(--background-primary);
+    border-radius: 12px;
+    padding: $spacing-xl;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+
+    .my-listings-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: $spacing-md;
+      margin-bottom: $spacing-lg;
+
+      h2 {
+        margin: 0;
+        color: var(--text-primary);
+      }
+    }
+
+    .my-listings-empty {
+      color: var(--text-secondary);
+      background: var(--background-secondary);
+      border: 1px solid var(--border-color);
+      padding: $spacing-md;
+      border-radius: 8px;
+    }
+
+    .my-listings-grid {
+      display: grid;
+      gap: $spacing-lg;
+    }
+
+    .listing-card {
+      display: grid;
+      grid-template-columns: minmax(180px, 220px) 1fr;
+      gap: $spacing-md;
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: $spacing-md;
+      background: var(--background-secondary);
+
+      .listing-image-wrap {
+        border-radius: 8px;
+        overflow: hidden;
+        min-height: 140px;
+        background: var(--background-primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .listing-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .listing-image-placeholder {
+        color: var(--text-tertiary);
+        font-size: 0.9rem;
+      }
+
+      .listing-content {
+        display: flex;
+        flex-direction: column;
+        gap: $spacing-xs;
+
+        h3 {
+          margin: 0;
+          color: var(--text-primary);
+        }
+
+        .listing-price {
+          margin: 0;
+          color: var(--primary-color);
+          font-weight: 700;
+        }
+
+        .listing-meta {
+          margin: 0;
+          color: var(--text-secondary);
+          font-size: 0.92rem;
+        }
+      }
+
+      .listing-edit-form {
+        grid-column: 1 / -1;
+      }
+
+      .listing-actions {
+        margin-top: $spacing-sm;
+        display: flex;
+        flex-wrap: wrap;
+        gap: $spacing-sm;
+
+        .btn {
+          padding: $spacing-xs $spacing-md;
+        }
+
+        .btn-danger {
+          background: #c73232;
+          color: #fff;
+          border: none;
+
+          &:hover:not(:disabled) {
+            background: #aa2323;
+          }
+
+          &:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+          }
+        }
+      }
+    }
+  }
+
   @media (max-width: 768px) {
     .container {
       padding: 0 $spacing-sm;
@@ -329,6 +447,29 @@
 
     .image-previews {
       grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    }
+
+    .my-listings-section {
+      padding: $spacing-md;
+
+      .my-listings-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .listing-card {
+        grid-template-columns: 1fr;
+
+        .listing-image-wrap {
+          min-height: 180px;
+        }
+
+        .listing-actions {
+          .btn {
+            width: 100%;
+          }
+        }
+      }
     }
   }
 }
