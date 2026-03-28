@@ -7,6 +7,7 @@ import './BuyCars.scss';
 const BuyCars = () => {
   const { translations } = useLanguage();
   const sectionsRef = useRef([]);
+  const latestRequestIdRef = useRef(0);
   const [cars, setCars] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -64,6 +65,7 @@ const BuyCars = () => {
   // Fetch cars whenever filters or search changes
   useEffect(() => {
     const fetchCars = async () => {
+      const requestId = ++latestRequestIdRef.current;
       setLoading(true);
       setError('');
       
@@ -82,6 +84,9 @@ const BuyCars = () => {
         });
 
         const response = await api.get('/cars', { params });
+
+        // Ignore stale responses from older requests
+        if (requestId !== latestRequestIdRef.current) return;
         
         if (response.data.success) {
           setCars(response.data.data);
@@ -92,11 +97,13 @@ const BuyCars = () => {
           }));
         }
       } catch (err) {
+        if (requestId !== latestRequestIdRef.current) return;
         console.error('Error fetching cars:', err);
         setError('Failed to load cars. Please try again.');
         // Fallback to empty array on error
         setCars([]);
       } finally {
+        if (requestId !== latestRequestIdRef.current) return;
         setLoading(false);
       }
     };
@@ -137,10 +144,16 @@ const BuyCars = () => {
   }, []);
 
   const handleFilterChange = (filterName, value) => {
+    setPagination(prev => ({ ...prev, page: 1 }));
     setFilters(prev => ({
       ...prev,
       [filterName]: value
     }));
+  };
+
+  const handleSearchChange = (e) => {
+    setPagination(prev => ({ ...prev, page: 1 }));
+    setSearchQuery(e.target.value);
   };
 
   const clearFilters = () => {
@@ -184,7 +197,7 @@ const BuyCars = () => {
               type="text"
               placeholder={translations.buyCars?.searchPlaceholder || 'Search by brand or model...'}
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={handleSearchChange}
             />
             <svg className="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="11" cy="11" r="8"></circle>
@@ -372,7 +385,7 @@ const BuyCars = () => {
         {/* Cars Grid */}
         {!loading && !error && filteredCars.length > 0 && (
           <>
-            <div className="cars-grid fade-in-up" ref={(el) => (sectionsRef.current[3] = el)}>
+            <div className="cars-grid fade-in-up fade-in-visible" ref={(el) => (sectionsRef.current[3] = el)}>
               {filteredCars.map(car => (
                 <CarCard key={car._id} car={car} />
               ))}
